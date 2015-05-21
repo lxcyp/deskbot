@@ -1,36 +1,54 @@
 import os, sys
-from modules import var, ini, irc, commands
+from modules import ini, irc, commands, var
 
 os.system("clear")
 print "Starting deskbot."
 
+# Grabbing arguments given.
+
 try:
     irc.server = sys.argv[1]
-    irc.connect(irc.server, 6667)
-except:
+except IndexError:
     print "No server to connect to was given."
-    os._exit(0)
+    irc.server = raw_input("Server to connect to: ")
 
 try:
-    irc.botnick = sys.argv[2]
-    irc.admin = sys.argv[3]
-    irc.password = sys.argv[4]
-except:
-    pass
+    for i, arg in enumerate(sys.argv):
+        if arg in ["-p", "--pass"]:
+            irc.password = sys.argv[i+1].strip("'")
+        elif arg in ["-a", "--admin"]:
+            irc.admin = sys.argv[i+1].strip("'")
+        elif arg in ["-b", "--botnick"]:
+            irc.botnick = sys.argv[i+1].strip("'")
+except IndexError:
+    print "Incorrect use of one of the flags."
+    os._exit(0)
 
-if not os.path.isfile("ini/desktops.ini"):
-    print "There is no desktops.ini file."
+# Looking for ini files.
 
-ini.readFile()
-irc.displayInfo()
+for file in ["desktops.ini", "channels.ini", "hscreens.ini"]:
+    if not os.path.isfile("ini/{}".format(file)):
+        print "There is no {} file.".format(file)
+        os._exit(0)
+
+# Reading the file (if it exists) and displaying information onscreen.
+
+irc.connect(irc.server, 6667)
+ini.read_files()
+commands.fill_help()
+irc.display_info()
 irc.init()
 irc.identify()
 
-for channel in var.chanList:
+# Joining predetermined channels.
+
+for channel in var.channels:
     irc.join(channel)
+
+# Main loop. It's tiem.
 
 while True:
     msgList = [msg for msg in irc.ircsock.recv(2048).split('\r\n') if msg]
     
-    for msg in msgList:
-        commands.read(msg)
+    for message in msgList:
+        commands.read(message)
