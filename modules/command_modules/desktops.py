@@ -1,9 +1,10 @@
 from .. import ini, var, irc
 from tools import is_identified, is_number, trim
 
-# Fill commands dictionary with usage.
-def ins_help ():
+# Fill command dictionary.
+def ins_command ():
     var.commands[".desktop"] = type("command", (object,), {})()
+    var.commands[".desktop"].method = read
     var.commands[".desktop"].aliases = [
         ".desktop",
         ".dtop",
