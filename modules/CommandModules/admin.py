@@ -3,29 +3,21 @@ from tools import is_identified
 
 # Fill commands dictionary with usage.
 def ins_help ():
-    var.commands[".join"] = {}
-    var.commands[".join"]["aliases"] = [".join"]
-    var.commands[".join"]["usage"] = [
-        "{} #channel - Join channel."
-    ]
+    var.commands[".join"] = type("command", (object,), {})()
+    var.commands[".join"].aliases = [".join"]
+    var.commands[".join"].usage = ["{} #channel - Join channel."]
     
-    var.commands[".part"] = {}
-    var.commands[".part"]["aliases"] = [".part"]
-    var.commands[".part"]["usage"] = [
-        "{} #channel - Part from channel."
-    ]
+    var.commands[".part"] = type("command", (object,), {})()
+    var.commands[".part"].aliases = [".part"]
+    var.commands[".part"].usage = ["{} #channel - Part from channel."]
     
-    var.commands[".raw"] = {}
-    var.commands[".raw"]["aliases"] = [".raw"]
-    var.commands[".raw"]["usage"] = [
-        "{} content - Send raw text to the server."
-    ]
+    var.commands[".raw"] = type("command", (object,), {})()
+    var.commands[".raw"].aliases = [".raw"]
+    var.commands[".raw"].usage = ["{} content - Send raw text to the server."]
     
-    var.commands[".identify"] = {}
-    var.commands[".identify"]["aliases"] = [".identify", ".ident"]
-    var.commands[".identify"]["usage"] = [
-        "{} - Try to identify with NickServ using set password."
-    ]
+    var.commands[".identify"] = type("command", (object,), {})()
+    var.commands[".identify"].aliases = [".identify", ".ident"]
+    var.commands[".identify"].usage = ["{} - Try to identify with NickServ using set password."]
 
 # Require NickServ authentication for the admin.
 def ident (f):
