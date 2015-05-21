@@ -12,7 +12,7 @@ python deskbot.py server [-p 'password'] [-b 'botnick'] [-a 'admin_nick']
 
 Note: be sure to place the server there if you'll be using the flags.
 
-Note 2: [] shouldn't be there, they're just to say "optional".
+Note 2: brackets shouldn't be there, they're just to say "optional".
 
 Note 3: the bot will pick up the first argument for the server, so...
 
