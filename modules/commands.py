@@ -1,87 +1,78 @@
-import irc, var, ini
-from CommandModules import desktops, join
+import irc, sys
+from CommandModules import desktops, hscreens, admin, help
 
-def read (message):
+# Parsing text.
+
+def read (msg):
+    print msg
     
-    print message
+    # Check for server ping.
+    if msg.startswith("PING :"):
+        return irc.pong(msg.split(' :')[1])
     
-    if message.startswith("PING"):
-        return ping(message)
+    # If the message received isn't a server ping, proceed.
+    user = msg.split('!')[0][1:]
     
-    user = message.split("@")[0].split("!")[0][1:]
     try:
-        event = message.split(" ")[1]
-    except:
-        event = ""
+        event = msg.split(' ')[1]
+    except IndexError:
+        event = ''
     
     if event == "PRIVMSG":
-        channel = message.split(" ")[2]
-        
-        if channel == irc.botnick:
-            channel = user
-        
-        try:
-            content = message.split(" :", 1)[1]
-        except IndexError:
-            return
-        
-        word = [w for w in content.split(" ") if w]
-        privmsg(user, channel, word)
+        channel = msg.split(' ')[2] if msg.split(' ')[2] != irc.botnick else user
+        content = msg.split(' :', 1)[1] if len(msg.split(' :')) > 1 else ''
+        privmsg(user, channel, content)
     elif event == "INVITE":
-        channel = message.split(" :", 1)[1]
-        irc.join(channel)
-        irc.msg(channel, "{} called.".format(user))
+        channel = msg.split(' :')[1]
+        invite(user, channel)
 
-def privmsg (user, channel, word):
+# Treating events.
+
+def privmsg (user, channel, content):
+    word = [w for w in content.split(' ') if w]
     
-    if not word:
-        return
-    
-    if user == irc.admin and word[0] == "join":
-	if len(word) > 1:
-		irc.join(word[1])
-    
-    if word[0] in commands:
+    if len(word) > 0 and word[0] in commands:
         commands[word[0]](user, channel, word)
 
-def ping (message):
-    data = message.split(" :")[1]
-    irc.pong(data)
+def invite (user, channel):
+    irc.join(channel)
+    irc.msg(channel, "{} invited me here.".format(user))
 
-def _reload (user, channel, word):
-    
-    if user != irc.admin:
-        return
-    
-    reload(desktops)
-    ini.readFile()
+# Should the user need to be identified, this function is called.
 
-def help (user, channel, word):
-    irc.notice(user, ".desktop - View your desktop list.")
-    irc.notice(user, ".desktop -a url1 url2 ... - Add a list of urls to your list.")
-    irc.notice(user, "--add and -add work as well.")
-    irc.notice(user, ".desktop -rm n1,n2,n3,... - Remove an url from your list.")
-    irc.notice(user, "--remove and -remove work as well. * will remove everything.")
-    irc.notice(user, ".desktop -re n url - Replace a url from your list.")
-    irc.notice(user, "--replace and -replace work as well.")
-    irc.notice(user, ".desktop user - View user's desktop list.")
-    irc.notice(user, ".desktop user n - View user's nth desktop url.")
+def ident (f):
+    module = sys.modules[f.__module__]
+    print "Debuggin' in commands."
+    if hasattr(module, "ident"):
+        return module.ident(f)
+    else:
+        return f
 
-def identify (user, channel, word):
-    
-    if user != irc.admin:
-        return
-    
-    irc.identify()
+# Filling the command help dictionary in var.
+
+def fill_help ():
+    for module in sys.modules:
+        if hasattr(sys.modules[module], "ins_help"):
+            sys.modules[module].ins_help()
+
+# Dictionary responsible for handling commands.
 
 commands = {
-    ".desktop":desktops.Desktops,
-    ".dtop":desktops.Desktops,
-    ".dekstop":desktops.Desktops,
-    ".join":join.read,
-    ".leave":join.leave,
-    
-    ".reload":_reload,
-    ".help":help,
-    ".identify":identify
+    # Desktop command aliases.
+    ".desktop":ident(desktops.read),
+    ".dtop":ident(desktops.read),
+    ".dekstop":ident(desktops.read),
+    # Homescreen command aliases.
+    ".hscreen":ident(hscreens.read),
+    ".homescreen":ident(hscreens.read),
+    ".hscr":ident(hscreens.read),
+    # Help command aliases.
+    ".help":ident(help.read),
+    "!help":ident(help.read),
+    # Other commands.
+    ".join":ident(admin.join),
+    ".part":ident(admin.part),
+    ".raw":ident(admin.raw),
+    ".identify":ident(admin.identify),
+    ".ident":ident(admin.identify)
 }
