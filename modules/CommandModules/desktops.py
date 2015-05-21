@@ -3,13 +3,13 @@ from tools import is_identified, is_number, trim
 
 # Fill commands dictionary with usage.
 def ins_help ():
-    var.commands[".desktop"] = {}
-    var.commands[".desktop"]["aliases"] = [
+    var.commands[".desktop"] = type("command", (object,), {})()
+    var.commands[".desktop"].aliases = [
         ".desktop",
         ".dtop",
         ".dekstop"
     ]
-    var.commands[".desktop"]["usage"] = [
+    var.commands[".desktop"].usage = [
         "{} - See your desktop list.",
         "{} n - See nth desktop in your list.",
         "{} user - See user's desktop list.",
@@ -23,7 +23,7 @@ def ins_help ():
         "{} -rm * will remove all of your saved desktops.",
         " ",
         "{} -replace n url - Replace your nth desktop with url.",
-        "You can also use -re instead of -replace.",
+        "You can also use -re instead of -replace."
     ]
 
 # This command will need NickServ auth sometimes.
