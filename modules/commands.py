@@ -42,7 +42,6 @@ def invite (user, channel):
 
 def ident (f):
     module = sys.modules[f.__module__]
-    print "Debuggin' in commands."
     if hasattr(module, "ident"):
         return module.ident(f)
     else:
