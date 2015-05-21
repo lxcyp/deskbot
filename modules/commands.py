@@ -1,5 +1,5 @@
-import irc, sys
-from CommandModules import desktops, hscreens, admin, help
+import irc, sys, var
+from command_modules import *
 
 # Parsing text.
 
@@ -47,31 +47,17 @@ def ident (f):
     else:
         return f
 
-# Filling the command help dictionary in var.
+# Filling the command dictionary in var.
 
-def fill_help ():
+def fill_commands ():
+    global commands
     for module in sys.modules:
-        if hasattr(sys.modules[module], "ins_help"):
-            sys.modules[module].ins_help()
+        if hasattr(sys.modules[module], "ins_command"):
+            sys.modules[module].ins_command()
+    for command in var.commands:
+        for alias in var.commands[command].aliases:
+            commands[alias] = ident(var.commands[command].method)
 
 # Dictionary responsible for handling commands.
 
-commands = {
-    # Desktop command aliases.
-    ".desktop":ident(desktops.read),
-    ".dtop":ident(desktops.read),
-    ".dekstop":ident(desktops.read),
-    # Homescreen command aliases.
-    ".hscreen":ident(hscreens.read),
-    ".homescreen":ident(hscreens.read),
-    ".hscr":ident(hscreens.read),
-    # Help command aliases.
-    ".help":ident(help.read),
-    "!help":ident(help.read),
-    # Other commands.
-    ".join":ident(admin.join),
-    ".part":ident(admin.part),
-    ".raw":ident(admin.raw),
-    ".identify":ident(admin.identify),
-    ".ident":ident(admin.identify)
-}
+commands = {}
