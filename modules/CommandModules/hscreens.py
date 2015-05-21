@@ -3,13 +3,13 @@ from tools import is_identified, is_number, trim
 
 # Fill commands dictionary with usage.
 def ins_help ():
-    var.commands[".hscreen"] = {}
-    var.commands[".hscreen"]["aliases"] = [
+    var.commands[".hscreen"] = type("command", (object,), {})()
+    var.commands[".hscreen"].aliases = [
         ".hscr",
         ".homescreen",
         ".hscreen"
     ]
-    var.commands[".hscreen"]["usage"] = [
+    var.commands[".hscreen"].usage = [
         "{} - See your homescreen list.",
         "{} n - See nth homescreen in your list.",
         "{} user - See user's homescreen list.",
@@ -23,7 +23,7 @@ def ins_help ():
         "{} -rm * will remove all of your saved homescreens.",
         " ",
         "{} -replace n url - Replace your nth homescreen with url.",
-        "You can also use -re instead of -replace.",
+        "You can also use -re instead of -replace."
     ]
 
 # This command will need NickServ auth sometimes.
