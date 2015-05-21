@@ -1,8 +1,9 @@
 from .. import irc, var
 
-# Fill commands dictionary with usage.
-def ins_help ():
+# Fill commands dictionary.
+def ins_command ():
     var.commands[".help"] = type("command", (object,), {})()
+    var.commands[".help"].method = read
     var.commands[".help"].aliases = [
         ".help",
         "!help",
