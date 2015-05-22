@@ -1,4 +1,4 @@
-from .. import irc
+import irc, commands
 
 # Functions that return booleans.
 
@@ -13,7 +13,7 @@ def is_identified (user):
             if msg.startswith(":NickServ"):
                 NickServ = msg
             else:
-                read(msg)
+                commands.read(msg)
     
     if "STATUS {} 3".format(user) in NickServ:
         return True
