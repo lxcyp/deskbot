@@ -35,7 +35,7 @@ for file in ["desktops.ini", "channels.ini", "hscreens.ini"]:
 
 irc.connect(irc.server, 6667)
 ini.read_files()
-commands.fill_help()
+commands.fill_commands()
 irc.display_info()
 irc.init()
 irc.identify()
