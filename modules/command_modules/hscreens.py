@@ -103,7 +103,7 @@ def list_urls (user, channel, word):
         # Looking for NSFW URLs. (as indicated by '!')
         url_list = map(nsfw_check, url_list)
         
-        line = ' '.join(list) + " [{}]".format(target)
+        line = ' '.join(url_list) + " [{}]".format(target)
         irc.msg(channel, line)
 
 # Add a list of homescreens to the saved ones. Will require NickServ authentication.
@@ -159,18 +159,21 @@ def delete_url (user, channel, word):
         return
     
     # Copy contents of indexed list in database to deletion list.
-    for index, number in enumerate(d_list):
+    for index, number in enumerate(del_list):
         if len(var.hscreens[user]) > number:
-            d_list[index] = var.hscreens[user][number]
+            del_list[index] = var.hscreens[user][number]
     
     # Proceed to remove them one by one.
-    for entry in d_list:
+    for entry in del_list:
         if entry in var.hscreens[user]:
             var.hscreens[user].remove(entry)
     
     # Delete entry in database for empty list.
     if not var.hscreens[user]:
         del var.hscreens[user]
+        ini.remove_from_ini("Homescreens", user, "hscreens.ini")
+        irc.msg(channel, "{}: All of your homescreens were removed successfully.".format(user))
+        return
     
     ini.add_to_ini("Homescreens", user, '\n'.join(var.hscreens[user]), "hscreens.ini")
     irc.msg(channel, "{}: Homescreen(s) deleted.".format(user))
