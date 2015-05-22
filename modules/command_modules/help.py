@@ -22,7 +22,7 @@ def read (user, channel, word):
 
 # List available commands.
 def list_commands (user):
-    line = "Available commands: " + " ".join(var.commands.keys())
+    line = "Available commands: " + " ".join(["." + cmd for cmd in var.commands.keys()])
     irc.notice(user, line)
 
 # Show certain command usage.
@@ -30,9 +30,9 @@ def command_help (user, command):
     alias_dict = {}
     
     # Fill dictionary of aliases. Link them to the command name.
-    for cmd in var.commands:
-        for alias in var.commands[cmd].aliases:
-            alias_dict[alias] = cmd
+    for cmd_name in var.commands:
+        for alias in var.commands[cmd_name].aliases:
+            alias_dict[alias] = cmd_name
     
     if command not in alias_dict:
         irc.notice(user, "No usage info for {} available.".format(command))
