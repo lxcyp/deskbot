@@ -1,5 +1,6 @@
+import os
 from .. import irc, var
-from tools import is_identified
+from ..tools import is_identified
 
 # Fill commands dictionary.
 def ins_command ():
