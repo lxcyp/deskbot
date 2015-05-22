@@ -27,18 +27,18 @@ def list_commands (user):
 
 # Show certain command usage.
 def command_help (user, command):
-    dict = {}
+    alias_dict = {}
     
     # Fill dictionary of aliases. Link them to the command name.
     for cmd in var.commands:
         for alias in var.commands[cmd].aliases:
-            dict[alias] = cmd
+            alias_dict[alias] = cmd
     
-    if command not in dict:
+    if command not in alias_dict:
         irc.notice(user, "No usage info for {} available.".format(command))
     else:
-        aliases = var.commands[dict[command]].aliases
-        usage = var.commands[dict[command]].usage
+        aliases = var.commands[alias_dict[command]].aliases
+        usage = var.commands[alias_dict[command]].usage
         
         irc.notice(user, "Command aliases: " + " ".join(aliases))
         irc.notice(user, "Usage:")
