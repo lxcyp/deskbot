@@ -40,12 +40,16 @@ def invite (user, channel):
 
 # Should the user need to be identified, this function is called.
 
-def ident (f):
-    module = sys.modules[f.__module__]
-    if hasattr(module, "ident"):
-        return module.ident(f)
-    else:
-        return f
+def ident (cmd_obj):
+    module = sys.modules[cmd_obj.method.__module__]
+    def dsbl_check (user, channel, word):
+        if channel in cmd_obj.disabled:
+            return
+        elif hasattr(module, "ident"):
+            return module.ident(cmd_obj.method)(user, channel, word)
+        else:
+            return cmd_obj.method(user, channel, word)
+    return dsbl_check
 
 # Filling the command dictionary in var.
 
@@ -55,8 +59,9 @@ def fill_commands ():
         if hasattr(sys.modules[module], "ins_command"):
             sys.modules[module].ins_command()
     for command in var.commands:
+        var.commands[command].disabled = []
         for alias in var.commands[command].aliases:
-            commands[alias] = ident(var.commands[command].method)
+            commands[alias] = ident(var.commands[command])
 
 # Dictionary responsible for handling commands.
 
