@@ -7,7 +7,7 @@ botnick = "deskbot"         # Default bot nick.
 password = ""               # Default NickServ password.
 admin = "spoonm"            # Default admin nickname.
 
-def displayInfo ():
+def display_info ():
     print "Nickname: {}".format(botnick)
     print "Password: {}".format(password)
     print "Admin: {}".format(admin)
