@@ -4,14 +4,14 @@ from tools import trim, nsfw_check
 
 # Fill command dictionary.
 def ins_command ():
-    var.commands[".desktop"] = type("command", (object,), {})()
-    var.commands[".desktop"].method = read
-    var.commands[".desktop"].aliases = [
+    var.commands["desktop"] = type("command", (object,), {})()
+    var.commands["desktop"].method = read
+    var.commands["desktop"].aliases = [
         ".desktop",
         ".dtop",
         ".dekstop"
     ]
-    var.commands[".desktop"].usage = [
+    var.commands["desktop"].usage = [
         "{} - See your desktop list.",
         "{} n - See nth desktop in your list.",
         "{} user - See user's desktop list.",
