@@ -103,7 +103,7 @@ def list_urls (user, channel, word):
         # Looking for NSFW URLs. (as indicated by '!')
         url_list = map(nsfw_check, url_list)
         
-        line = ' '.join(list) + " [{}]".format(target)
+        line = ' '.join(url_list) + " [{}]".format(target)
         irc.msg(channel, line)
 
 # Add a list of desktops to the saved ones. Will require NickServ authentication.
@@ -159,18 +159,21 @@ def delete_url (user, channel, word):
         return
     
     # Copy contents of indexed list in database to deletion list.
-    for index, number in enumerate(d_list):
+    for index, number in enumerate(del_list):
         if len(var.desktops[user]) > number:
-            d_list[index] = var.desktops[user][number]
+            del_list[index] = var.desktops[user][number]
     
     # Proceed to remove them one by one.
-    for entry in d_list:
+    for entry in del_list:
         if entry in var.desktops[user]:
             var.desktops[user].remove(entry)
     
-    # Delete entry in database for empty list.
+    # Delete entry in database for an empty list and remove user from ini file.
     if not var.desktops[user]:
         del var.desktops[user]
+        ini.remove_from_ini("Desktops", user, "desktops.ini")
+        irc.msg(channel, "{}: All of your desktops were removed successfully.".format(user))
+        return
     
     ini.add_to_ini("Desktops", user, '\n'.join(var.desktops[user]), "desktops.ini")
     irc.msg(channel, "{}: Desktop(s) deleted.".format(user))
