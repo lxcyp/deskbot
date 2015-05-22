@@ -1,4 +1,5 @@
 from .. import irc, var
+from HTMLParser import HTMLParser
 import json, urllib
 
 # Fill command dictionary.
@@ -37,6 +38,6 @@ def search (query):
     
     else:
         return {
-            "title":data["results"][0]["titleNoFormatting"],
-            "url":data["results"][0]["url"]
+            "title":HTMLParser().unescape(data["results"][0]["titleNoFormatting"]),
+            "url":urllib.unquote(data["results"][0]["url"])
         }
