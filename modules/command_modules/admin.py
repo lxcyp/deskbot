@@ -13,6 +13,14 @@ def ins_command ():
     var.commands["part"].aliases = [".part"]
     var.commands["part"].usage = ["{} #channel - Part from channel."]
     
+    var.commands["quit"] = type("command", (object,), {})()
+    var.commands["quit"].method = quit
+    var.commands["quit"].aliases = [".quit"]
+    var.commands["quit"].usage = [
+        "{} - Quit server and close bot.",
+        "{} message - Use quit message when quitting from server."
+    ]
+    
     var.commands["raw"] = type("command", (object,), {})()
     var.commands["raw"].method = raw
     var.commands["raw"].aliases = [".raw"]
@@ -32,7 +40,6 @@ def ins_command ():
     var.commands["enable"].method = enable
     var.commands["enable"].aliases = [".enable", ".add"]
     var.commands["enable"].usage = ["{} .command1 .command2 ... - Enable commands for this channel."]
-
 
 # Require NickServ authentication for the admin.
 def ident (f):
@@ -56,6 +63,10 @@ def part (user, channel, word):
         irc.part(word[1], " ".join(word[2:]) if len(word) > 2 else "")
     else:
         irc.msg(channel, "{}: Tell me a channel to part from.".format(user))
+
+# Quit server and close bot.
+def quit (user, channel, word):
+    irc.quit(" ".join(word[1:]) if len(word) > 1 else "")
 
 # Send raw text to the server.
 def raw (user, channel, word):
