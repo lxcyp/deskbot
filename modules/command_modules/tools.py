@@ -1,6 +1,8 @@
 import sys
 from .. import irc
 
+# Functions that return booleans.
+
 # Check for NickServ authentication.
 def is_identified (user):
     irc.msg("NickServ", "STATUS {}".format(user))
@@ -27,14 +29,22 @@ def is_number (num):
     except ValueError:
         return False
 
+# Functions that return values.
+
 # We want to get rid of certain characters.
-def trim (str):
-    if "\x03" in str:
-        str = str.split("\x03")[0]
-    if "\x02" in str:
-        str = str.split("\x02")[0]
-    if "\x1d" in str:
-        str = str.split("\x1d")[0]
-    if "\x0f" in str:
-        str = str.split("\x0f")[0]
-    return str
+def trim (string):
+    if "\x03" in string:
+        string = string.split("\x03")[0]
+    if "\x02" in string:
+        str = string.split("\x02")[0]
+    if "\x1d" in string:
+        str = string.split("\x1d")[0]
+    if "\x0f" in string:
+        str = string.split("\x0f")[0]
+    return string
+
+# We want to tag NSFW urls as NSFW.
+def nsfw_check (url_pair):
+    if "!" in url_pair.split(" ")[1]:
+        url_pair = "[\x034NSFW\x0f] {}".format(url_pair.split(" ")[1].strip("!"))
+    return url_pair
