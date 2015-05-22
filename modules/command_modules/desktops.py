@@ -1,6 +1,6 @@
 from .. import ini, var, irc
-from tools import is_identified, is_number
-from tools import trim, nsfw_check
+from ..tools import is_identified, is_number
+from ..tools import trim, nsfw_check
 
 # Fill command dictionary.
 def ins_command ():
