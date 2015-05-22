@@ -2,13 +2,13 @@ from .. import irc, var
 
 # Fill commands dictionary.
 def ins_command ():
-    var.commands[".help"] = type("command", (object,), {})()
-    var.commands[".help"].method = read
-    var.commands[".help"].aliases = [
+    var.commands["help"] = type("command", (object,), {})()
+    var.commands["help"].method = read
+    var.commands["help"].aliases = [
         ".help",
         "!help",
     ]
-    var.commands[".help"].usage = [
+    var.commands["help"].usage = [
         "{} - Display list of commands.",
         "{} .command - Get additional help for that command."
     ]
