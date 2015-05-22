@@ -1,5 +1,6 @@
 from .. import ini, var, irc
-from tools import is_identified, is_number, trim
+from tools import is_identified, is_number
+from tools import trim, nsfw_check
 
 # Fill command dictionary.
 def ins_command ():
@@ -47,18 +48,18 @@ def ident (f):
 def read (user, channel, word):
     
     if len(word) < 3:
-        list(user, channel, word)
+        list_urls(user, channel, word)
     elif word[1] in ["-a", "-add"]:
-        add(user, channel, word)
+        add_url(user, channel, word)
     elif word[1] in ["-rm", "--rm"]:
-        delete(user, channel, word)
+        delete_url(user, channel, word)
     elif word[1] in ["-re", "-replace"]:
-        replace(user, channel, word)
+        replace_url(user, channel, word)
     else:
-        list(user, channel, word)
+        list_urls(user, channel, word)
 
 # List saved desktops. Can accept username and/or a number as parameter.
-def list (user, channel, word):
+def list_urls (user, channel, word):
     target, number = False, False
     
     if len(word) == 1:
@@ -97,21 +98,19 @@ def list (user, channel, word):
             line += "{} [{}]".format(var.desktops[target][number].strip("!"), target)
             irc.msg(channel, line)
     else:
-        list = ["[{}] {}".format(ind+1, url) for ind, url in enumerate(var.desktops[target])]
+        url_list = ["[{}] {}".format(ind+1, url) for ind, url in enumerate(var.desktops[target])]
         
         # Looking for NSFW URLs. (as indicated by '!')
-        for pair in list:
-            if '!' in pair:
-                pair = "[\x034NSFW\x0f] {}".format(pair.split(" ")[1].strip("!"))
+        url_list = map(nsfw_check, url_list)
         
         line = ' '.join(list) + " [{}]".format(target)
         irc.msg(channel, line)
 
 # Add a list of desktops to the saved ones. Will require NickServ authentication.
-def add (user, channel, word):
-    list = [url for url in word[2:] if url.startswith("http://") or url.startswith("https://")]
+def add_url (user, channel, word):
+    a_list = [url for url in word[2:] if url.startswith("http://") or url.startswith("https://")]
     
-    if not list:
+    if not a_list:
         irc.msg(channel, "{}: Links have to start with \"http://\" or \"https://\".".format(user))
         return
     
@@ -129,7 +128,7 @@ def add (user, channel, word):
         return
     
     # Fill saved list until it reaches 5 desktops.
-    for url in list:
+    for url in a_list:
         if len(var.desktops[user]) < 5:
             var.desktops[user].append(trim(url))
         else:
@@ -139,8 +138,8 @@ def add (user, channel, word):
     irc.msg(channel, "{}: Desktop(s) added.".format(user))
 
 # Removes desktops from the user's list. Will require NickServ authentication.
-def delete (user, channel, word):
-    list = [int(x) - 1 for x in word[2].split(',') if (is_number(x) and int(x) > 0)]
+def delete_url (user, channel, word):
+    del_list = [int(x) - 1 for x in word[2].split(',') if (is_number(x) and int(x) > 0)]
     
     # Wildcard removes everything saved for that user from the database.
     if word[2] == "*" and user in var.desktops:
@@ -150,7 +149,7 @@ def delete (user, channel, word):
         return
     
     # The list only needs numbers.
-    if not list:
+    if not del_list:
         irc.msg(channel, "{}: Invalid number(s).".format(user))
         return
     
@@ -160,12 +159,12 @@ def delete (user, channel, word):
         return
     
     # Copy contents of indexed list in database to deletion list.
-    for index, number in enumerate(list):
+    for index, number in enumerate(d_list):
         if len(var.desktops[user]) > number:
-            list[index] = var.desktops[user][number]
+            d_list[index] = var.desktops[user][number]
     
     # Proceed to remove them one by one.
-    for entry in list:
+    for entry in d_list:
         if entry in var.desktops[user]:
             var.desktops[user].remove(entry)
     
@@ -177,7 +176,7 @@ def delete (user, channel, word):
     irc.msg(channel, "{}: Desktop(s) deleted.".format(user))
 
 # Replace a desktop in the user's list. Will require NickServ authentication.
-def replace (user, channel, word):
+def replace_url (user, channel, word):
     
     # This command receives two pieces of information.
     if len(word) < 4:
