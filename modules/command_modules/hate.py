@@ -9,7 +9,7 @@ def ins_command ():
     var.commands["hate"].usage = ["{} user - Send user some hateful message."]
 
 # The hate list!
-hate = [
+hate_list = [
     "slaps {} in the face.",
     "kicks {} in the balls/tits.",
     "pulls {}'s hair.",
@@ -33,4 +33,4 @@ def hate (user, channel, word):
     if target == irc.botnick:
         irc.msg(channel, "{}: no u".format(user))
     else:
-        irc.msg(channel, "\001ACTION " + random.choice(hate).format(target) + "\001")
+        irc.msg(channel, "\001ACTION " + random.choice(hate_list).format(target) + "\001")
