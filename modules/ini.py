@@ -37,15 +37,15 @@ def add_to_ini (section, option, data, path):
     config.optionxform = str
     config.read(path)
     
-    if config.has_section(section):
-        if data:
-            config.set(section, option, data)
-        else:
-            remove_from_ini(section, option, path)
-            return
+    # Check if the section is valid and if not, create it.
+    if not config.has_section(section):
+        config.add_section(section)
+        
+    if data:
+        config.set(section, option, data)
     else:
-        print "Wrong section used."
-        os._exit(0)
+        remove_from_ini(section, option, path)
+        return
     
     with open(path, 'wb') as iniFile:
         config.write(iniFile)
