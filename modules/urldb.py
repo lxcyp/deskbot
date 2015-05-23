@@ -138,6 +138,10 @@ def delete_function (url_dict, dict_name, file, sect_name):
     def delete_url (user, channel, word):
         del_list = [int(x) - 1 for x in word[2].split(',') if (is_number(x) and int(x) > 0)]
         
+        for nick in url_dict:
+            if user.lower() == nick.lower():
+                user = nick
+        
         # Wildcard removes everything saved for that user from the database.
         if word[2] == "*" and user in url_dict:
             del url_dict[user]
