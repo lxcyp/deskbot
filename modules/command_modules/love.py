@@ -9,7 +9,7 @@ def ins_command ():
     var.commands["love"].usage = ["{} user - Send user some love."]
 
 # The love list!
-love = [
+love_list = [
     "gives {} a bear hug.",
     "d-doesn't like {}, you b-baka!",
     "lovingly eviscerates {}.",
@@ -37,4 +37,4 @@ def love (user, channel, word):
     if target == irc.botnick:
         irc.msg(channel, "{}: y-you too!".format(user))
     else:
-        irc.msg(channel, "\001ACTION " + random.choice(love).format(target) + "\001")
+        irc.msg(channel, "\001ACTION " + random.choice(love_list).format(target) + "\001")
