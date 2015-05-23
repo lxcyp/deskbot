@@ -25,6 +25,11 @@ def init ():
     ircsock.send("NICK {}\n".format(botnick))
     time.sleep(2)
 
+def nick (username):
+    global botnick
+    ircsock.send("NICK :{}\r\n".format(username))
+    botnick = username
+
 def identify ():
     ircsock.send("PRIVMSG NickServ :IDENTIFY {}\r\n".format(password))
     print("Trying to identify with NickServ.")
