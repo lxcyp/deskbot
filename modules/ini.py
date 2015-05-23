@@ -2,11 +2,6 @@ import os.path, os
 import ConfigParser
 import var
 
-def read_files ():
-    var.desktops = fill_dict("desktops.ini", "Desktops")
-    var.hscreens = fill_dict("hscreens.ini", "Homescreens")
-    var.channels = fill_list("channels.ini")
-
 # Reading from ini files.
 
 def fill_dict (path, section):
