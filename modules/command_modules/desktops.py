@@ -67,7 +67,7 @@ def list_urls (user, channel, word):
     elif len(word) == 2:
         target = word[1] if not is_number(word[1]) else user
         number = word[1] if is_number(word[1]) else False
-    elif len(word) == 3:
+    elif len(word) >= 3:
         target = word[1]
         number = word[2]
     
