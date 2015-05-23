@@ -14,18 +14,18 @@ def fill_dict (path, section):
     config.optionxform = str
     config.read("ini/" + path)
     
-    dict = {}
+    rd_dict = {}
     
     if config.has_section(section):
         for option in config.options(section):
-            dict[option.replace('~', '[')] = config.get(section, option).split('\n')
+            rd_dict[option.replace('~', '[')] = config.get(section, option).split('\n')
     
-    return dict
+    return rd_dict
 
 def fill_list (path):
     with open("ini/{}".format(path)) as file:
-        list = [line.strip() for line in file]
-    return list
+        rd_list = [line.strip() for line in file]
+    return rd_list
 
 # Making changes to ini files.
 
