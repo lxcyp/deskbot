@@ -25,6 +25,9 @@ def read (msg):
     elif event == "INVITE":
         channel = msg.split(' :')[1]
         invite(user, channel)
+    elif event == "NICK":
+        if user == irc.admin:
+            irc.admin = msg.split(' :')[1]
 
 # Treating events.
 
