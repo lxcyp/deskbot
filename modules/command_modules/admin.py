@@ -8,12 +8,12 @@ def ins_command ():
     var.commands["join"].method = join
     var.commands["join"].aliases = [".join"]
     var.commands["join"].usage = ["{} #channel - Join channel."]
-    
+
     var.commands["part"] = type("command", (object,), {})()
     var.commands["part"].method = part
     var.commands["part"].aliases = [".part"]
     var.commands["part"].usage = ["{} #channel - Part from channel."]
-    
+
     var.commands["quit"] = type("command", (object,), {})()
     var.commands["quit"].method = quit
     var.commands["quit"].aliases = [".quit"]
@@ -21,26 +21,36 @@ def ins_command ():
         "{} - Quit server and close bot.",
         "{} message - Use quit message when quitting from server."
     ]
-    
+
     var.commands["raw"] = type("command", (object,), {})()
     var.commands["raw"].method = raw
     var.commands["raw"].aliases = [".raw"]
     var.commands["raw"].usage = ["{} content - Send raw text to the server."]
-    
+
     var.commands["identify"] = type("command", (object,), {})()
     var.commands["identify"].method = identify
     var.commands["identify"].aliases = [".identify", ".ident"]
     var.commands["identify"].usage = ["{} - Try to identify with NickServ using set password."]
-    
+
     var.commands["disable"] = type("command", (object,), {})()
     var.commands["disable"].method = disable
     var.commands["disable"].aliases = [".disable", ".rm"]
     var.commands["disable"].usage = ["{} .command1 .command2 ... - Disable commands for this channel."]
-    
+
     var.commands["enable"] = type("command", (object,), {})()
     var.commands["enable"].method = enable
     var.commands["enable"].aliases = [".enable", ".add"]
     var.commands["enable"].usage = ["{} .command1 .command2 ... - Enable commands for this channel."]
+    
+    var.commands["nick"] = type("command", (object,), {})()
+    var.commands["nick"].method = nick
+    var.commands["nick"].aliases = [".nick"]
+    var.commands["nick"].usage = ["{} nick - Change bot's nickname."]
+    
+    var.commands["passwd"] = type("command", (object,), {})()
+    var.commands["passwd"].method = passwd
+    var.commands["passwd"].aliases = [".passwd", ".pwd", ".pass"]
+    var.commands["passwd"].usage = ["{} password - Change NickServ password the bot uses to identify."]
 
 # Require NickServ authentication for the admin.
 def ident (f):
@@ -79,6 +89,22 @@ def raw (user, channel, word):
 # Sometimes the bot fails to identify with NickServ.
 def identify (user, channel, word):
     irc.identify()
+
+# Update NickServ password before identifying again.
+def passwd (user, channel, word):
+    if len(word) < 2:
+        irc.msg(irc.admin, "Send me a password, moron.")
+    else:
+        irc.password = word[1]
+        irc.msg(irc.admin, "Password updated.")
+
+# Update botnick.
+def nick (user, channel, word):
+    if len(word) < 2:
+        irc.msg(channel, "{}: You gotta tell me what nick to change to.".format(user))
+    else:
+        irc.nick(word[1])
+        irc.msg(channel, "{}: Nick changed successfully.".format(user))
 
 # Disable commands. Can accept multiple commands.
 def disable (user, channel, word):
