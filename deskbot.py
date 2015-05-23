@@ -5,7 +5,6 @@ os.system("clear")
 print "Starting deskbot."
 
 # Grabbing arguments given.
-
 try:
     irc.server = sys.argv[1]
 except IndexError:
@@ -24,29 +23,23 @@ except IndexError:
     print "Incorrect use of one of the flags."
     os._exit(0)
 
-# Looking for ini files.
+# Creating ini folder, if it doesn't exist.
+if not os.path.isdir("ini"):
+    os.mkdir("ini")
 
-for file in ["desktops.ini", "channels.ini", "hscreens.ini"]:
-    if not os.path.isfile("ini/{}".format(file)):
-        print "There is no {} file.".format(file)
-        os._exit(0)
-
-# Reading the file (if it exists) and displaying information onscreen.
-
-irc.connect(irc.server, 6667)
-ini.read_files()
+# Reading the channels file and displaying information onscreen.
+var.channels = ini.fill_list("channels.ini")
 commands.fill_commands()
+irc.connect(irc.server, 6667)
 irc.display_info()
 irc.init()
 irc.identify()
 
 # Joining predetermined channels.
-
 for channel in var.channels:
     irc.join(channel)
 
 # Main loop. It's tiem.
-
 while True:
     msgList = [msg for msg in irc.ircsock.recv(2048).split('\r\n') if msg]
     
