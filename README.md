@@ -1,9 +1,9 @@
 deskbot
 -------
 
-\#rice's desktop bot. (At least for now.)
+Started as a desktop bot. I'm trying to make it as complete as spoonbot, then work from there.
 
-I'd list the commands and usage here, but if you really want to know, just check .help, come on.
+Check the wiki for a list of commands and how to make your own.
 
 To start the bot:
 ```
