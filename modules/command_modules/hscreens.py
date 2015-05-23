@@ -1,5 +1,5 @@
 from .. import var, ini
-from .. import url_db
+from .. import urldb
 
 # This command uses a database, so allocate space for it.
 var.data["hscreens"] = ini.fill_dict("hscreens.ini", "Homescreens")
@@ -13,10 +13,10 @@ def ins_command ():
         ".homescreen",
         ".hscr"
     ]
-    var.commands["hscreen"].usage = [line.format("{}", n="homescreen") for line in url_db.command_usage]
+    var.commands["hscreen"].usage = [line.format("{}", n="homescreen") for line in urldb.command_usage]
 
 # This command will need NickServ auth sometimes.
-ident = url_db.ident
+ident = urldb.ident
 
 # Used for the command method.
 def read (user, channel, word):    
@@ -32,7 +32,7 @@ def read (user, channel, word):
         list_urls(user, channel, word)
 
 # Functions.
-list_urls = url_db.list_function(var.data["hscreens"], "homescreens")
-add_url = url_db.add_function(var.data["hscreens"], "homescreens", "hscreens.ini", "Homescreens")
-delete_url = url_db.delete_function(var.data["hscreens"], "homescreens", "hscreens.ini", "Homescreens")
-replace_url = url_db.replace_function(var.data["hscreens"], "homescreens", "hscreens.ini", "Homescreens")
+list_urls = urldb.list_function(var.data["hscreens"], "homescreens")
+add_url = urldb.add_function(var.data["hscreens"], "homescreens", "hscreens.ini", "Homescreens")
+delete_url = urldb.delete_function(var.data["hscreens"], "homescreens", "hscreens.ini", "Homescreens")
+replace_url = urldb.replace_function(var.data["hscreens"], "homescreens", "hscreens.ini", "Homescreens")
