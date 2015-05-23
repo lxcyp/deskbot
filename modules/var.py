@@ -1,9 +1,6 @@
 # Dictionaries
-
-desktops = {}
-hscreens = {}
 commands = {}
+data = {}
 
-# Default channels
-
+# Channels list
 channels = []
