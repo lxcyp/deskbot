@@ -23,4 +23,4 @@ def version (user, channel, word):
     
     # Only show a message if a reply is received.
     if ver:
-        irc.msg(channel, "{} [{}]".format(ver, target))
+        irc.msg(channel, "\x0f{} [{}]".format(ver, target))
