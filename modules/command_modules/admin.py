@@ -1,6 +1,6 @@
-import re
-from .. import irc, var
+from .. import irc, var, ini
 from ..tools import is_identified
+import re
 
 # Fill commands dictionary.
 def ins_command ():
@@ -65,6 +65,7 @@ def ident (f):
 def join (user, channel, word):
     if len(word) > 1:
         irc.join(word[1])
+        ini.add_to_list(word[1], "channels.ini")
     else:
         irc.msg(channel, "{}: Tell me a channel to join.".format(user))
 
@@ -72,6 +73,7 @@ def join (user, channel, word):
 def part (user, channel, word):
     if len(word) > 1:
         irc.part(word[1], " ".join(word[2:]) if len(word) > 2 else "")
+        ini.remove_from_list(word[1], "channels.ini")
     else:
         irc.msg(channel, "{}: Tell me a channel to part from.".format(user))
 
