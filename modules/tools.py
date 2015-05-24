@@ -49,7 +49,7 @@ def ctcp_req (user, request):
     while not reply and end - start < 20:
         irclist = [ x for x in irc.ircsock.recv(2048).split('\r\n') if x ]
         for msg in irclist:
-            if request in msg and msg.startswith(":"+user):
+            if request in msg and msg.startswith(":"+user) and " NOTICE " in msg:
                 reply = msg.split(request, 1)[1].strip("\001").lstrip()
             else:
                 commands.read(msg)
