@@ -21,7 +21,7 @@ def google (user, channel, word):
     g = search(query)
     
     if g:
-        irc.msg(channel, "Title: {}".format(g["title"]))
+        irc.msg(channel, unicode(u"Title: " + g["title"]).encode("utf-8"))
         irc.msg(channel, "URL: {}".format(g["url"]))
     else:
         irc.msg(channel, "{}: No results found.".format(user))
