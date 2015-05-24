@@ -1,4 +1,5 @@
 import irc, commands
+import time, re
 
 # Functions that return booleans.
 
@@ -29,6 +30,36 @@ def is_number (num):
         return False
 
 # Functions that return values.
+
+# Make a CTCP request and return the reply.
+def ctcp_req (user, request):
+    reply, start, end = False, time.time(), time.time()
+    
+    # Check if the username is valid, so we don't waste our time.
+    if not re.match("[a-zA-Z\[\]\\`_\^\{\|\}][a-zA-Z0-9\[\]\\`_\^\{\|\}]", user):
+        return 1
+    
+    # Just for formality.
+    request = request.upper()
+    
+    # Send the request.
+    irc.msg(user, "\001{}\001".format(request))
+    
+    # Only listen for 20 seconds.
+    while not reply and end - start < 20:
+        irclist = [ x for x in irc.ircsock.recv(2048).split('\r\n') if x ]
+        for msg in irclist:
+            if request in msg and msg.startswith(":"+user):
+                reply = msg.split(request, 1)[1].strip("\001")
+            else:
+                commands.read(msg)
+        end = time.time()
+    
+    # Return the reply, if it got one.
+    if reply:
+        return reply
+    else:
+        return ""
 
 # We want to get rid of certain characters.
 def trim (string):
