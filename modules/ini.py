@@ -1,13 +1,13 @@
-import os.path, os
 import ConfigParser
 import var, irc
 
 # Reading from ini files.
 
-def fill_dict (file, section):
+# Return dictionary of option:data.
+def fill_dict (filename, section):
     config = ConfigParser.RawConfigParser()
     config.optionxform = str
-    config.read("ini/{}/{}".format(irc.server, file))
+    config.read("ini/{}/{}".format(irc.server, filename))
     
     rd_dict = {}
     
@@ -17,13 +17,15 @@ def fill_dict (file, section):
     
     return rd_dict
 
-def fill_list (file):
-    with open("ini/{}/{}".format(irc.server, file), "a+") as file:
-        rd_list = [line.strip() for line in file]
+# Return list of lines in a file without "\n" at the end.
+def fill_list (filename):
+    with open("ini/{}/{}".format(irc.server, filename), "a+") as list_file:
+        rd_list = [line.strip() for line in list_file]
     return rd_list
 
 # Making changes to ini files.
 
+# Set an option inside a section on a config(ini) file.
 def add_to_ini (section, option, data, path):
     option = option.replace('[', '~')
     path = path if path.startswith("ini/") else "ini/{}/{}".format(irc.server, path)
@@ -45,6 +47,7 @@ def add_to_ini (section, option, data, path):
     with open(path, 'wb') as iniFile:
         config.write(iniFile)
 
+# Remove option from a config(ini) file.
 def remove_from_ini (section, option, path):
     option = option.replace('[', '~')
     path = path if path.startswith("ini/") else "ini/{}/{}".format(irc.server, path)
@@ -60,3 +63,25 @@ def remove_from_ini (section, option, path):
     
     with open(path, 'wb') as iniFile:
         config.write(iniFile)
+
+# Add line to a list file.
+def add_to_list (line, filename):
+    with open("ini/{}/{}".format(irc.server, filename), "a") as list_file:
+        # Write line to file if it isn't already there.
+        if line + "\n" not in list_file.readlines():
+            list_file.write(line + "\n")
+
+# Remove line from a list file.
+def remove_from_list (line, filename):
+    with open("ini/{}/{}".format(irc.server, filename), "r+") as list_file:
+        # List every line in the file.
+        lines = list_file.readlines()
+        # Go to the beginning of file.
+        list_file.seek(0)
+        
+        # Write everything on the file except line.
+        for curr_line in lines:
+            if curr_line != line + "\n":
+                list_file.write(curr_line)
+        
+        list_file.truncate()
