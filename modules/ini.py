@@ -66,7 +66,7 @@ def remove_from_ini (section, option, path):
 
 # Add line to a list file.
 def add_to_list (line, filename):
-    with open("ini/{}/{}".format(irc.server, filename), "a") as list_file:
+    with open("ini/{}/{}".format(irc.server, filename), "a+") as list_file:
         # Write line to file if it isn't already there.
         if line + "\n" not in list_file.readlines():
             list_file.write(line + "\n")
