@@ -23,9 +23,13 @@ except IndexError:
     print "Incorrect use of one of the flags."
     os._exit(0)
 
-# Creating ini folder, if it doesn't exist.
+# Creating ini folder for network, if it doesn't exist.
 if not os.path.isdir("ini"):
     os.mkdir("ini")
+    print "Creating ini folder."
+if not os.path.isdir("ini/{}".format(irc.server)):
+    os.mkdir("ini/{}".format(irc.server))
+    print "Creating ini folder for {}.".format(irc.server)
 
 # Reading the channels file and displaying information onscreen.
 var.channels = ini.fill_list("channels.ini")
