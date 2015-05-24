@@ -51,6 +51,11 @@ def ins_command ():
     var.commands["passwd"].method = passwd
     var.commands["passwd"].aliases = [".passwd", ".pwd", ".pass"]
     var.commands["passwd"].usage = ["{} password - Change NickServ password the bot uses to identify."]
+    
+    var.commands["ctcp"] = type("command", (object,), {})()
+    var.commands["ctcp"].method = ctcp
+    var.commands["ctcp"].aliases = [".ctcp"]
+    var.commands["ctcp"].usage = ["{} request reply - Add a CTCP reply for request."]
 
 # Require NickServ authentication for the admin.
 def ident (f):
@@ -163,3 +168,16 @@ def enable (user, channel, word):
         irc.msg(channel, "{}: No commands were enabled.".format(user))
     else:
         irc.msg(channel, "{}: Enabled commands: {}".format(user, " ".join(enabled)))
+
+# Add CTCP replies.
+def ctcp (user, channel, word):
+    # This command needs two pieces of info.
+    if len(word) < 3:
+        irc.msg(channel, "{}: Wrong syntax. Check .help".format(user))
+        return
+    
+    request = word[1].upper()
+    reply = " ".join(word[2:])
+    
+    var.ctcp[request] = reply
+    irc.msg(channel, "{}: CTCP {} reply added successfully.".format(user, request))
