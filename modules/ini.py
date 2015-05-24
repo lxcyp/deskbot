@@ -1,13 +1,13 @@
 import os.path, os
 import ConfigParser
-import var
+import var, irc
 
 # Reading from ini files.
 
-def fill_dict (path, section):
+def fill_dict (file, section):
     config = ConfigParser.RawConfigParser()
     config.optionxform = str
-    config.read("ini/" + path)
+    config.read("ini/{}/{}".format(irc.server, file))
     
     rd_dict = {}
     
@@ -17,8 +17,8 @@ def fill_dict (path, section):
     
     return rd_dict
 
-def fill_list (path):
-    with open("ini/{}".format(path)) as file:
+def fill_list (file):
+    with open("ini/{}/{}".format(irc.server, file), "a+") as file:
         rd_list = [line.strip() for line in file]
     return rd_list
 
@@ -26,7 +26,7 @@ def fill_list (path):
 
 def add_to_ini (section, option, data, path):
     option = option.replace('[', '~')
-    path = path if path.startswith("ini/") else "ini/{}".format(path)
+    path = path if path.startswith("ini/") else "ini/{}/{}".format(irc.server, path)
     
     config = ConfigParser.RawConfigParser()
     config.optionxform = str
@@ -47,7 +47,7 @@ def add_to_ini (section, option, data, path):
 
 def remove_from_ini (section, option, path):
     option = option.replace('[', '~')
-    path = path if path.startswith("ini/") else "ini/{}".format(path)
+    path = path if path.startswith("ini/") else "ini/{}/{}".format(irc.server, path)
     
     config = ConfigParser.RawConfigParser()
     config.optionxform = str
