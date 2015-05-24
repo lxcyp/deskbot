@@ -2,7 +2,16 @@ from .. import var, ini
 from .. import urldb
 
 # This command uses a database, so allocate space for it.
-var.data["hscreens"] = ini.fill_dict("hscreens.ini", "Homescreens")
+def ins_db ():
+    global list_urls, add_url
+    global delete_url, replace_url
+    
+    var.data["hscreens"] = ini.fill_dict("hscreens.ini", "Homescreens")
+    
+    list_urls = urldb.list_function(var.data["hscreens"], "homescreens")
+    add_url = urldb.add_function(var.data["hscreens"], "homescreens", "hscreens.ini", "Homescreens")
+    delete_url = urldb.delete_function(var.data["hscreens"], "homescreens", "hscreens.ini", "Homescreens")
+    replace_url = urldb.replace_function(var.data["hscreens"], "homescreens", "hscreens.ini", "Homescreens")
 
 # Fill command dictionary.
 def ins_command ():
@@ -32,7 +41,7 @@ def read (user, channel, word):
         list_urls(user, channel, word)
 
 # Functions.
-list_urls = urldb.list_function(var.data["hscreens"], "homescreens")
-add_url = urldb.add_function(var.data["hscreens"], "homescreens", "hscreens.ini", "Homescreens")
-delete_url = urldb.delete_function(var.data["hscreens"], "homescreens", "hscreens.ini", "Homescreens")
-replace_url = urldb.replace_function(var.data["hscreens"], "homescreens", "hscreens.ini", "Homescreens")
+list_urls = None
+add_url = None
+delete_url = None
+replace_url = None
