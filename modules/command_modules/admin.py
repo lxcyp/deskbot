@@ -1,4 +1,4 @@
-import os
+import re
 from .. import irc, var
 from ..tools import is_identified
 
@@ -103,8 +103,12 @@ def nick (user, channel, word):
     if len(word) < 2:
         irc.msg(channel, "{}: You gotta tell me what nick to change to.".format(user))
     else:
-        irc.nick(word[1])
-        irc.msg(channel, "{}: Nick changed successfully.".format(user))
+        # Check if the nickname is valid.
+        if not re.match("[a-zA-Z\[\]\\`_\^\{\|\}][a-zA-Z0-9\[\]\\`_\^\{\|\}]", word[1]):
+            irc.msg(channel, "{}: Invalid nickname.".format(user))
+        else:
+            irc.nick(word[1])
+            irc.msg(channel, "{}: Nick changed successfully.".format(user))
 
 # Disable commands. Can accept multiple commands.
 def disable (user, channel, word):
