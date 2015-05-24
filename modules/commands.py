@@ -59,6 +59,10 @@ def ident (cmd_obj):
 def fill_commands ():
     global commands
     for module in sys.modules:
+        # In case the command uses ini files.
+        if hasattr(sys.modules[module], "ins_db"):
+            sys.modules[module].ins_db()
+        # Function that fills var.commands for every command.
         if hasattr(sys.modules[module], "ins_command"):
             sys.modules[module].ins_command()
     for command in var.commands:
