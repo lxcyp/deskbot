@@ -34,12 +34,18 @@ def read (msg):
 def privmsg (user, channel, content):
     word = [w for w in content.split(' ') if w]
     
-    if len(word) > 0 and word[0] in commands:
+    if len(word) and word[0] in commands:
         commands[word[0]](user, channel, word)
+    elif len(word) and word[0].startswith("\001"):
+        ctcp(user, word[0].strip("\001"))
 
 def invite (user, channel):
     irc.join(channel)
     irc.msg(channel, "{} invited me here.".format(user))
+
+def ctcp (user, request):
+    if request in var.ctcp:
+        irc.notice(user, "\001{} {}\001".format(request, var.ctcp[request]))
 
 # Should the user need to be identified, this function is called.
 
