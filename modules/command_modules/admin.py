@@ -1,5 +1,5 @@
 from .. import irc, var, ini
-from ..tools import is_identified
+from ..tools import is_identified, prefix
 import re
 
 # Fill commands dictionary.
@@ -55,13 +55,22 @@ def ins_command ():
     var.commands["ctcp"] = type("command", (object,), {})()
     var.commands["ctcp"].method = ctcp
     var.commands["ctcp"].aliases = [".ctcp"]
-    var.commands["ctcp"].usage = ["{} request reply - Add a CTCP reply for request."]
+    var.commands["ctcp"].usage = [
+        "{} request - Check CTCP reply for request, if present.",
+        "{} remove request - Remove entry for CTCP request reply.",
+        "{} request reply - Add a CTCP reply for request."
+    ]
 
 # Require NickServ authentication for the admin.
 def ident (f):
     def admin (user, channel, word):
         if user == irc.admin and is_identified(user):
             f(user, channel, word)
+        elif word[0] in [".enable", ".disable"] and is_identified(user):
+            if prefix(user, channel) in ["@", "!", "~", "%"]:
+                f(user, channel, word)
+            else:
+                irc.msg(channel, "{}: You need at least hop to do that.".format(user))
         else:
             irc.msg(channel, "{}: You don't have admin rights.".format(user))
     return admin
@@ -171,13 +180,36 @@ def enable (user, channel, word):
 
 # Add CTCP replies.
 def ctcp (user, channel, word):
-    # This command needs two pieces of info.
+    # This command can accept only one piece of info.
     if len(word) < 3:
-        irc.msg(channel, "{}: Wrong syntax. Check .help".format(user))
+        # In case a request name is given.
+        if len(word) == 2:
+            request = word[1].upper()
+            
+            if request in var.ctcp:
+                irc.msg(channel, "{}: {} [{}]".format(user, var.ctcp[request], request))
+            else:
+                irc.msg(channel, "{}: No reply set for {}.".format(user, request))
+        # Not it does need a piece of info.
+        else:
+            irc.msg(channel, "{}: Wrong syntax. Check .help".format(user))
+        
         return
     
     request = word[1].upper()
     reply = " ".join(word[2:])
     
-    var.ctcp[request] = reply
-    irc.msg(channel, "{}: CTCP {} reply added successfully.".format(user, request))
+    if request != "REMOVE":
+        var.ctcp[request] = reply
+        ini.add_to_ini("CTCP", request, reply, "ctcp.ini")
+        irc.msg(channel, "{}: CTCP {} reply added successfully.".format(user, request))
+    else:
+        request = word[2].upper()
+        
+        # Check if it can be removed and remove it.
+        if request in var.ctcp:
+            del var.ctcp[request]
+            ini.remove_from_ini("CTCP", request, "ctcp.ini")
+            irc.msg(channel, "{}: CTCP {} reply removed successfully.".format(user, request))
+        else:
+            irc.msg(channel, "{}: There's nothing set for CTCP {}.".format(user, request))
