@@ -9,7 +9,7 @@ def is_identified (user):
     NickServ = False
     
     while not NickServ:
-        irclist = [ x for x in irc.ircsock.recv(2048).split('\r\n') if x ]
+        irclist = [x for x in irc.ircsock.recv(2048).split("\r\n") if x]
         for msg in irclist:
             if msg.startswith(":NickServ"):
                 NickServ = msg
@@ -30,6 +30,32 @@ def is_number (num):
         return False
 
 # Functions that return values.
+
+# Check prefix for user in channel.
+def prefix (user, channel):
+    irc.ircsock.send("NAMES {}\n".format(channel))
+    prefix, loop = [], True
+    
+    while loop:
+        irclist = [x for x in irc.ircsock.recv(2048).split("\r\n") if x]
+        for msg in irclist:
+            if "{} @ {}".format(irc.botnick, channel) in msg:
+                prefix += msg.split(" :", 1)[1].split(" ")
+            elif msg.endswith("{} {} :End of /NAMES list.".format(irc.botnick, channel)):
+                loop = False
+            else:
+                commands.read(msg)
+    
+    # Now that the list is complete, let's make a dictionary.
+    prefix = {nick[1:]:nick[0] for nick in prefix}
+    
+    # And look for user.
+    if user in prefix:
+        return prefix[user]
+    elif user[1:] in prefix:
+        return "Doesn't have a prefix."
+    else:
+        return "Not found."
 
 # Make a CTCP request and return the reply.
 def ctcp_req (user, request):
