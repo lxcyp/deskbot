@@ -34,6 +34,7 @@ if not os.path.isdir("ini/{}".format(irc.server)):
 # Reading the channels and ctcp file.
 var.channels = ini.fill_list("channels.ini")
 var.ctcp = ini.fill_dict("ctcp.ini", "CTCP")
+var.ctcp = {key:var.ctcp[key][0] for key in var.ctcp}
 
 # Filling commands.
 commands.fill_commands()
