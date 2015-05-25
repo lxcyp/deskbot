@@ -1,4 +1,4 @@
-import socket, time, os
+import socket, time
 
 ircsock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
@@ -50,7 +50,7 @@ def part (target, message):
 
 def quit (reason):
     ircsock.send("QUIT :{}\r\n".format(reason))
-    os._exit(0)
+    raise SystemExit
 
 def kick (channel, target, reason):
     ircsock.send("KICK {} {} :{}\r\n".format(channel, target, reason))
