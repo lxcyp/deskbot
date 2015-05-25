@@ -31,9 +31,14 @@ if not os.path.isdir("ini/{}".format(irc.server)):
     os.mkdir("ini/{}".format(irc.server))
     print "Creating ini folder for {}.".format(irc.server)
 
-# Reading the channels file and displaying information onscreen.
+# Reading the channels and ctcp file.
 var.channels = ini.fill_list("channels.ini")
+var.ctcp = ini.fill_dict("ctcp.ini", "CTCP")
+
+# Filling commands.
 commands.fill_commands()
+
+# Connecting and display info.
 irc.connect(irc.server, 6667)
 irc.display_info()
 irc.init()
