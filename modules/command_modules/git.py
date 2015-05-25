@@ -8,9 +8,13 @@ def ins_db ():
     
     var.data["gits"] = ini.fill_dict("gits.ini", "Gits")
     
+    # Pick first and only element in list.
+    for entry in var.data["gits"]:
+        var.data["gits"][entry] = var.data["gits"][entry][0]
+    
     access_db = simpledb.access_function(var.data["gits"], "git")
     mod_entry = simpledb.mod_function(var.data["gits"], "git", "gits.ini", "Gits")
-    rm_entry = simpledb.mod_function(var.data["gits"], "git", "gits.ini", "Gits")
+    rm_entry = simpledb.rm_function(var.data["gits"], "git", "gits.ini", "Gits")
 
 # Fill commands dictionary.
 def ins_command ():
