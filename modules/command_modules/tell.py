@@ -71,6 +71,8 @@ def leave_message (user, channel, word):
     # Append tuple and add to ini.
     var.data["messages"][target].append((user, message))
     ini.add_to_ini("Messages", target, "{} ~ {}".format(user, message), "messages.ini")
+    
+    irc.msg(channel, "{}: Message stored.".format(user))
 
 # Send a user stored messages.
 def send_messages (user):
