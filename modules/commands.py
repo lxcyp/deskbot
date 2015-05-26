@@ -2,7 +2,6 @@ import irc, sys, var
 from command_modules import *
 
 # Parsing text.
-
 def read (msg):
     print msg
     
@@ -28,6 +27,10 @@ def read (msg):
     elif event == "NICK":
         if user == irc.admin:
             irc.admin = msg.split(' :')[1]
+    
+    # Finally, call the monitor functions.
+    for function in monitor:
+        function(msg)
 
 # Treating events.
 
@@ -48,7 +51,6 @@ def ctcp (user, request):
         irc.notice(user, "\001{} {}\001".format(request, var.ctcp[request]))
 
 # Should the user need to be identified, this function is called.
-
 def ident (cmd_obj):
     module = sys.modules[cmd_obj.method.__module__]
     def dsbl_check (user, channel, word):
@@ -61,13 +63,15 @@ def ident (cmd_obj):
     return dsbl_check
 
 # Filling the command dictionary in var.
-
 def fill_commands ():
     global commands
     for module in sys.modules:
         # In case the command uses ini files.
         if hasattr(sys.modules[module], "ins_db"):
             sys.modules[module].ins_db()
+        # Message monitor function.
+        if hasattr(sys.modules[module], "ins_monitor"):
+            monitor.append(sys.modules[module].ins_monitor)
         # Function that fills var.commands for every command.
         if hasattr(sys.modules[module], "ins_command"):
             sys.modules[module].ins_command()
@@ -77,5 +81,7 @@ def fill_commands ():
             commands[alias] = ident(var.commands[command])
 
 # Dictionary responsible for handling commands.
-
 commands = {}
+
+# List of functions to call once a message is received.
+monitor = []
