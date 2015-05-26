@@ -54,9 +54,9 @@ def leave_message (user, channel, word):
     message = " ".join(word[2:])
     
     # Check if target is a valid nickname.
-        if not re.match("[a-zA-Z\[\]\\`_\^\{\|\}][a-zA-Z0-9\[\]\\`_\^\{\|\}]", target):
-            irc.msg(channel, "{} is not a valid nickname.".format(target))
-            return
+    if not re.match("[a-zA-Z\[\]\\`_\^\{\|\}][a-zA-Z0-9\[\]\\`_\^\{\|\}]", target):
+        irc.msg(channel, "{} is not a valid nickname.".format(target))
+        return
     
     # Check for repeated messages.
     if target in var.data["messages"]:
