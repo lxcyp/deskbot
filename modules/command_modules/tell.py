@@ -15,7 +15,7 @@ def ident (f):
 def ins_monitor (message):
     user = message.split("!")[0][1:]
     try:
-        event = msg.split(' ')[1]
+        event = message.split(' ')[1]
     except IndexError:
         event = ''
     
