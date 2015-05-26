@@ -47,7 +47,7 @@ def prefix (user, channel):
                 commands.read(msg)
     
     # Now that the list is complete, let's make a dictionary.
-    prefix = {nick[1:]:nick[0] for nick in prefix}
+    prefix = {nick[1:] if len(nick) > 1 else nick[0]:nick[0] for nick in prefix}
     
     # And look for user.
     if user in prefix:

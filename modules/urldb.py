@@ -114,12 +114,12 @@ def add_function (url_dict, dict_name, file, sect_name, *args):
         if user not in url_dict:
             url_dict[user] = []
         
-        # Or check if existing user already has 5 desktops saved.
+        # Or check if existing user already has max URLs saved.
         elif len(url_dict[user]) == max:
-            irc.msg(channel, "{}: You already have {} {} saved.".format(user, max, dict_name.rstrip("s")))
+            irc.msg(channel, "{}: You already have {} {} saved.".format(user, max, dict_name))
             return
         
-        # Fill saved list until it reaches 5 desktops.
+        # Fill saved list until it reaches max URLs.
         for url in a_list:
             if len(url_dict[user]) < max:
                 url_dict[user].append(trim(url))
@@ -214,6 +214,11 @@ def replace_function (url_dict, dict_name, file, sect_name, *args):
             irc.msg(channel, "{}: Invalid number.".format(user))
             return
         
+        # Ignore case.
+        for nick in url_dict:
+            if user.lower() == nick.lower():
+                user = nick
+        
         # Try to replace URL using received number.
         try:
             url_dict[user][number] = trim(word[3])
@@ -223,5 +228,8 @@ def replace_function (url_dict, dict_name, file, sect_name, *args):
         # It might not work, if the list isn't long enough.
         except IndexError:
             irc.msg(channel, "{}: Invalid number.".format(user))
+        # And it won't work if the user isn't in the URL database.
+        except KeyError:
+            irc.msg(channel, "{}: You don't have any {} saved.".format(user, dict_name))
     
     return replace_url
