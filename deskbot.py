@@ -11,6 +11,8 @@ except IndexError:
     print "No server to connect to was given."
     irc.server = raw_input("Server to connect to: ")
 
+irc.port = 6667
+
 try:
     for i, arg in enumerate(sys.argv):
         if arg in ["-p", "--pass"]:
@@ -19,6 +21,9 @@ try:
             irc.admin = sys.argv[i+1].strip("'")
         elif arg in ["-b", "--botnick"]:
             irc.botnick = sys.argv[i+1].strip("'")
+	elif arg in ["-o", "--port"]:
+            irc.port = int(sys.argv[i+1].strip("'"))
+
 except IndexError:
     print "Incorrect use of one of the flags."
     os._exit(0)
@@ -40,7 +45,7 @@ var.ctcp = {key:var.ctcp[key][0] for key in var.ctcp}
 commands.fill_commands()
 
 # Connecting and display info.
-irc.connect(irc.server, 6667)
+irc.connect(irc.server, irc.port)
 irc.display_info()
 irc.init()
 irc.identify()
