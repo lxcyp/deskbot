@@ -67,7 +67,13 @@ def ident (f):
         if user == irc.admin and is_identified(user):
             f(user, channel, word)
         elif word[0] in [".enable", ".disable"] and is_identified(user):
-            if prefix(user, channel) in ["@", "!", "~", "%"]:
+            if prefix(user, channel) in [
+                var.settings["op.prefix"],
+                var.settings["ircop.prefix"],
+                var.settings["owner.prefix"],
+                var.settings["admin.prefix"],
+                var.settings["halfop.prefix"]
+            ]:
                 f(user, channel, word)
             else:
                 irc.msg(channel, "{}: You need at least hop to do that.".format(user))
