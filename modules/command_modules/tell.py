@@ -70,7 +70,8 @@ def leave_message (user, channel, word):
     
     # Append tuple and add to ini.
     var.data["messages"][target].append((user, message))
-    ini.add_to_ini("Messages", target, "{} ~ {}".format(user, message), "messages.ini")
+    message_list = ["{} ~ {}".format(tuple[0], tuple[1]) for tuple in var.data["messages"][target]]
+    ini.add_to_ini("Messages", target, "\n".join(message_list), "messages.ini")
     
     irc.msg(channel, "{}: Message stored.".format(user))
 
@@ -89,6 +90,8 @@ def send_messages (user):
         st_messages = var.data["messages"][user][0:4]
         for tuple in st_messages:
             var.data["messages"][user].remove(tuple)
+        new_messages = ["{} ~ {}".format(tuple[0], tuple[1]) for tuple in var.data["messages"][user]]
+        ini.add_to_ini("Messages", user, "\n".join(new_messages), "messages.ini")
         
         irc.msg(user, "To reply to them, use .tell user message")
         irc.msg(user, "You have more messages. Type \x034.showtells\x0f to view them.")
@@ -99,6 +102,7 @@ def send_messages (user):
         
         # Remove them.
         del var.data["messages"][user]
+        ini.remove_from_ini("Messages", user, "messages.ini")
         
         irc.msg(user, "To reply to them, use .tell user message")
 
