@@ -1,5 +1,5 @@
-from .. import irc, var
-from chatterbotapi import ChatterBotFactory, ChatterBotType
+#from .. import irc, var
+from ..chatterbotapi import ChatterBotFactory, ChatterBotType
 
 # Fill command dictionary.
 def ins_command ():
