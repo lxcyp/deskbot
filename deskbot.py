@@ -56,7 +56,6 @@ commands.fill_commands()
 irc.connect(irc.server, irc.port)
 irc.display_info()
 irc.init()
-irc.identify()
 
 # Joining predetermined channels.
 for channel in var.channels:

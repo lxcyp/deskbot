@@ -21,6 +21,10 @@ def read (msg):
         channel = msg.split(' ')[2] if msg.split(' ')[2] != irc.botnick else user
         content = msg.split(' :', 1)[1] if len(msg.split(' :')) > 1 else ''
         privmsg(user, channel, content)
+    elif event == "NOTICE":
+        channel = msg.split(' ')[2] if msg.split(' ')[2] != irc.botnick else user
+        content = msg.split(' :', 1)[1] if len(msg.split(' :')) > 1 else ''
+        notice(user, channel, content)
     elif event == "INVITE":
         channel = msg.split(' :')[1]
         invite(user, channel)
@@ -41,6 +45,14 @@ def privmsg (user, channel, content):
         commands[word[0]](user, channel, word)
     elif len(word) and word[0].startswith("\001"):
         ctcp(user, word[0].strip("\001"))
+
+def notice (user, channel, content):
+    # Should the bot fail to identify the first time.
+    if user == "NickServ" and "This nickname is registered and" in content:
+        irc.identify()
+        # Some channels might have +R enabled.
+        for channel in var.channels:
+            irc.join(channel)
 
 def invite (user, channel):
     irc.join(channel)
