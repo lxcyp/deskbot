@@ -239,4 +239,4 @@ def ctcp (user, channel, word):
 # Restart the bot.
 def restart (user, channel, word):
     irc.quit(" ".join(word[1:]) if len(word) > 1 else random.choice(quotes))
-    os.execl(sys.executable, *([sys.executable]+sys.argv))
+    os.execl(sys.executable, *([sys.executable] + sys.argv + ["-b", irc.botnick]))
