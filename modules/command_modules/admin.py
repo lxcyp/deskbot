@@ -1,6 +1,16 @@
 from .. import irc, var, ini
 from ..tools import is_identified, prefix
-import re
+import random, re, os, sys
+
+# Taiga quotes list.
+quotes = [
+    "I dreamt that you were a dog. And the dog was my husband. Anyway, it was the worst dream ever.",
+    "Well, I'd better get back to my seat. The unmarried woman with her unmarried face is about to come to start the unmarried homeroom.",
+    "The thing you wished for the most, is something you'll never get.",
+    "The stupid chihuahua was really taking a shower. She was... boing... Boing... BOING!!",
+    "How can I know what to do later when I don't know what to do right now?",
+    "It was like a rough, dry wilderness. Also, it was really, really warm..."
+]
 
 # Fill commands dictionary.
 def ins_command ():
@@ -60,6 +70,11 @@ def ins_command ():
         "{} remove request - Remove entry for CTCP request reply.",
         "{} request reply - Add a CTCP reply for request."
     ]
+    
+    var.commands["restart"] = type("command", (object,), {})()
+    var.commands["restart"].method = restart
+    var.commands["restart"].aliases = [".restart"]
+    var.commands["restart"].usage = ["{} - Restarts the bot."]
 
 # Require NickServ authentication for the admin.
 def ident (f):
@@ -99,7 +114,8 @@ def part (user, channel, word):
 
 # Quit server and close bot.
 def quit (user, channel, word):
-    irc.quit(" ".join(word[1:]) if len(word) > 1 else "")
+    irc.quit(" ".join(word[1:]) if len(word) > 1 else random.choice(quotes))
+    raise SystemExit
 
 # Send raw text to the server.
 def raw (user, channel, word):
@@ -219,3 +235,8 @@ def ctcp (user, channel, word):
             irc.msg(channel, "{}: CTCP {} reply removed successfully.".format(user, request))
         else:
             irc.msg(channel, "{}: There's nothing set for CTCP {}.".format(user, request))
+
+# Restart the bot.
+def restart (user, channel, word):
+    irc.quit(" ".join(word[1:]) if len(word) > 1 else random.choice(quotes))
+    os.execl(sys.executable, *([sys.executable]+sys.argv))

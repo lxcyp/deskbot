@@ -50,7 +50,6 @@ def part (target, message):
 
 def quit (reason):
     ircsock.send("QUIT :{}\r\n".format(reason))
-    raise SystemExit
 
 def kick (channel, target, reason):
     ircsock.send("KICK {} {} :{}\r\n".format(channel, target, reason))
