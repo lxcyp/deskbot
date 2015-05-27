@@ -41,6 +41,7 @@ def read (user, channel, word):
             ini.remove_from_ini("Settings", property, "settings.ini")
             irc.msg(channel, "{}: {} removed.".format(user, property))
     else:
+        value = True if value == "true" else False if value == "false" else value
         var.settings[property] = value
         ini.add_to_ini("Settings", property, value, "settings.ini")
         irc.msg(channel, "{}: {} property set to {}.".format(user, property, value))
