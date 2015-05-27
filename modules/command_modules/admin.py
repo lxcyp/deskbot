@@ -74,7 +74,10 @@ def ins_command ():
     var.commands["restart"] = type("command", (object,), {})()
     var.commands["restart"].method = restart
     var.commands["restart"].aliases = [".restart"]
-    var.commands["restart"].usage = ["{} - Restarts the bot."]
+    var.commands["restart"].usage = [
+        "{} - Restarts the bot.",
+        "{} message - Restarts with bot with quit message."
+    ]
 
 # Require NickServ authentication for the admin.
 def ident (f):
