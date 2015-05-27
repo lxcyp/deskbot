@@ -6,7 +6,7 @@ from .. import simpledb
 def ident (f):
     def check (user, channel, word):
         if is_identified(user):
-            f(user, channel, word):
+            f(user, channel, word)
         else:
             irc.msg(channel, "{}: Identify with NickServ first.".format(user))
     return check
