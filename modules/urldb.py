@@ -40,7 +40,7 @@ def ident (f):
     return check
 
 # Returns the function we'll need for the URL database listing command.
-def list_function (url_dict, dict_name):
+def list_function (url_dict, dict_name, add_function):
     
     # Responsible for listing URLs. Can accept username and/or a number as parameter.
     def list_urls (user, channel, word):
@@ -54,6 +54,14 @@ def list_function (url_dict, dict_name):
         elif len(word) >= 3:
             target = word[1]
             number = word[2]
+        
+        # Check if it's a URL or a number.
+        if target.startswith("http://") or target.startswith("https://"):
+            irc.msg(channel, "Did you mean to use -a {}?".format(target))
+            return
+        elif number and target.isdigit():
+            irc.msg(channel, "Did you mean to use -re {} {}?".format(target, number))
+            return
         
         for nick in url_dict:
             if target.lower() == nick.lower():
@@ -93,7 +101,7 @@ def list_function (url_dict, dict_name):
     return list_urls
 
 # Return the add_url function. Can receive a different max number.
-def add_function (url_dict, dict_name, file, sect_name, *args):
+def add_function (url_dict, dict_name, filename, sect_name, *args):
     
     # This is the max number of URLs to save.
     max = args[0] if args and args[0] > 0 else 5
@@ -126,13 +134,13 @@ def add_function (url_dict, dict_name, file, sect_name, *args):
             else:
                 break
         
-        ini.add_to_ini(sect_name, user, '\n'.join(url_dict[user]), file)
+        ini.add_to_ini(sect_name, user, '\n'.join(url_dict[user]), filename)
         irc.msg(channel, "{}: {} added.".format(user, sect_name))
     
     return add_url
 
 # Returns the delete function.
-def delete_function (url_dict, dict_name, file, sect_name):
+def delete_function (url_dict, dict_name, filename, sect_name):
 
     # Removes URLs from the user's list. Will require NickServ authentication.
     def delete_url (user, channel, word):
@@ -145,7 +153,7 @@ def delete_function (url_dict, dict_name, file, sect_name):
         # Wildcard removes everything saved for that user from the database.
         if word[2] == "*" and user in url_dict:
             del url_dict[user]
-            ini.remove_from_ini(sect_name, user, file)
+            ini.remove_from_ini(sect_name, user, filename)
             irc.msg(channel, "{}: All of your {} were removed successfully.".format(user, dict_name))
             return
         
@@ -172,18 +180,18 @@ def delete_function (url_dict, dict_name, file, sect_name):
         # Delete entry in database for an empty list and remove user from ini file.
         if not url_dict[user]:
             del url_dict[user]
-            ini.remove_from_ini(sect_name, user, file)
+            ini.remove_from_ini(sect_name, user, filename)
             irc.msg(channel, "{}: All of your {} were removed successfully.".format(user, dict_name))
             return
         
-        ini.add_to_ini(sect_name, user, '\n'.join(url_dict[user]), file)
+        ini.add_to_ini(sect_name, user, '\n'.join(url_dict[user]), filename)
         irc.msg(channel, "{}: {} deleted.".format(user, sect_name))
     
     return delete_url
 
 # Return the replace function for the URL database command.
 # Can also accept a different max number.
-def replace_function (url_dict, dict_name, file, sect_name, *args):
+def replace_function (url_dict, dict_name, filename, sect_name, *args):
     
     # This is the max number of URLs to save.
     max = args[0] if args and args[0] > 0 else 5
@@ -222,7 +230,7 @@ def replace_function (url_dict, dict_name, file, sect_name, *args):
         # Try to replace URL using received number.
         try:
             url_dict[user][number] = trim(word[3])
-            ini.add_to_ini(sect_name, user, '\n'.join(url_dict[user]), file)
+            ini.add_to_ini(sect_name, user, '\n'.join(url_dict[user]), filename)
             irc.msg(channel, "{}: {} replaced.".format(user, sect_name.rstrip("s")))
         
         # It might not work, if the list isn't long enough.
