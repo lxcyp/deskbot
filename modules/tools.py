@@ -1,25 +1,51 @@
-import irc, commands
+import irc, commands, var, ini
 import time, re
+
+# Functions that don't return anything, but help do stuff.
+def set_auth_method ():
+    irc.msg("NickServ", "STATUS {}".format(irc.botnick))
+    response = False
+    
+    while not response:
+        irclist = [x for x in irc.ircsock.recv(2048).split("\r\n") if x]
+        for msg in irclist:
+            if msg.startswith(":NickServ"):
+                response = msg
+            else:
+                commands.read(msg)
+    
+    if "STATUS" in response:
+        var.settings["ident.method"] = "STATUS"
+        ini.add_to_ini("Settings", "ident.method", "STATUS", "settings.ini")
+    else:
+        var.settings["ident.method"] = "ACC"
+        ini.add_to_ini("Settings", "ident.method", "ACC", "settings.ini")
 
 # Functions that return booleans.
 
 # Check for NickServ authentication.
 def is_identified (user):
-    irc.msg("NickServ", "STATUS {}".format(user))
-    NickServ = False
+    # Determine auth command with services.
+    if "ident.method" not in var.settings:
+        set_auth_method()
     
-    while not NickServ:
+    # Send set auth command.
+    irc.msg("NickServ", "{} {}".format(var.settings["ident.method"], user))
+    response = False
+    
+    while not response:
         irclist = [x for x in irc.ircsock.recv(2048).split("\r\n") if x]
         for msg in irclist:
             if msg.startswith(":NickServ"):
-                NickServ = msg
+                response = msg
             else:
                 commands.read(msg)
     
-    if "STATUS {} 3".format(user) in NickServ:
-        return True
-    else:
-        return False
+    # Checking with ident.method for NickServ auth.
+    if var.settings["ident.method"] == "STATUS":
+        return bool("STATUS {} 3".format(user) in response)
+    elif var.settings["ident.method"] == "ACC":
+        return bool("{} ACC 3".format(user) in response)
 
 # Check if a value is an integer.
 def is_number (num):
