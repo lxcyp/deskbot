@@ -1,4 +1,4 @@
-#from .. import irc, var
+from .. import irc, var
 from ..chatterbotapi import ChatterBotFactory, ChatterBotType
 
 # Fill command dictionary.
@@ -18,7 +18,7 @@ def chat (user, channel, word):
     if len(word) == 1:
         irc.msg(channel, "{}: You need to add a message.".format(user))
     else:
-        string = " ".join(word[1:])
+        text = " ".join(word[1:])
         think = bot1session.think(text)
         
         irc.msg(channel, "{}: {}".format(user, think))

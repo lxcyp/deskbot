@@ -72,7 +72,7 @@ def greet (user, channel):
         ini.add_to_ini("Settings", "intro.{}".format(channel), "true", "settings.ini")
     
     if user in var.data["intros"]:
-        irc.msg(channel, "\x0f{}".format(var.data["intros"][user])
+        irc.msg(channel, "\x0f{}".format(var.data["intros"][user]))
 
 # Functions filled by ins_db(). Start as None.
 access_db = None

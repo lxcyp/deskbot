@@ -41,7 +41,13 @@ var.channels = ini.fill_list("channels.ini")
 var.ctcp = ini.fill_dict("ctcp.ini", "CTCP")
 var.ctcp = {key:var.ctcp[key][0] for key in var.ctcp}
 var.settings = ini.fill_dict("settings.ini", "Settings")
-var.settings = {key:var.settings[key][0] for key in var.settings}
+var.settings = {
+    key:
+        True if var.settings[key][0] == "true"
+        else False if var.settings[key][0] == "false"
+        else var.settings[key][0]
+    for key in var.settings
+}
 
 # Filling commands.
 commands.fill_commands()
