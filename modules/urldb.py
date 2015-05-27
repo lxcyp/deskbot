@@ -40,7 +40,7 @@ def ident (f):
     return check
 
 # Returns the function we'll need for the URL database listing command.
-def list_function (url_dict, dict_name, add_function):
+def list_function (url_dict, dict_name):
     
     # Responsible for listing URLs. Can accept username and/or a number as parameter.
     def list_urls (user, channel, word):
