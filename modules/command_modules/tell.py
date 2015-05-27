@@ -70,7 +70,7 @@ def leave_message (user, channel, word):
     
     # Append tuple and add to ini.
     var.data["messages"][target].append((user, message))
-    message_list = ["{} ~ {}".format(tuple[0], tuple[1]) for tuple in var.data["messages"][target]]
+    message_list = ["{} ~ {}".format(pair[0], pair[1]) for pair in var.data["messages"][target]]
     ini.add_to_ini("Messages", target, "\n".join(message_list), "messages.ini")
     
     irc.msg(channel, "{}: Message stored.".format(user))
@@ -83,22 +83,22 @@ def send_messages (user):
     
     if len(var.data["messages"][user]) > 4:
         # Send the first 4 messages.
-        for tuple in var.data["messages"][user][0:4]:
-            irc.msg(user, "{} sent you: {}".format(tuple[0], tuple[1]))
+        for pair in var.data["messages"][user][0:4]:
+            irc.msg(user, "{} sent you: {}".format(pair[0], pair[1]))
         
         # Remove the sent messages.
         st_messages = var.data["messages"][user][0:4]
-        for tuple in st_messages:
-            var.data["messages"][user].remove(tuple)
-        new_messages = ["{} ~ {}".format(tuple[0], tuple[1]) for tuple in var.data["messages"][user]]
+        for pair in st_messages:
+            var.data["messages"][user].remove(pair)
+        new_messages = ["{} ~ {}".format(pair[0], pair[1]) for pair in var.data["messages"][user]]
         ini.add_to_ini("Messages", user, "\n".join(new_messages), "messages.ini")
         
         irc.msg(user, "To reply to them, use .tell user message")
         irc.msg(user, "You have more messages. Type \x034.showtells\x0f to view them.")
     else:
         # Send every message.
-        for tuple in var.data["messages"][user]:
-            irc.msg(user, "{} sent you: {}".format(tuple[0], tuple[1]))
+        for pair in var.data["messages"][user]:
+            irc.msg(user, "{} sent you: {}".format(pair[0], pair[1]))
         
         # Remove them.
         del var.data["messages"][user]
