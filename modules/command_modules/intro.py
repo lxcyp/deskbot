@@ -64,12 +64,12 @@ def read (user, channel, word):
 def greet (user, channel):
     # Add entry for channel in settings if it isn't present.
     # Stop this madness if intros are disabled.
-    if "intro.{}".format(channel) in var.settings:
-        if not var.settings["intro.{}".format(channel)]:
+    if "{}.intro".format(channel) in var.settings:
+        if not var.settings["{}.intro".format(channel)]:
             return
     else:
-        var.settings["intro.{}".format(channel)] = True
-        ini.add_to_ini("Settings", "intro.{}".format(channel), "true", "settings.ini")
+        var.settings["{}.intro".format(channel)] = True
+        ini.add_to_ini("Settings", "{}.intro".format(channel), "true", "settings.ini")
     
     if user in var.data["intros"]:
         irc.msg(channel, "\x0f{}".format(var.data["intros"][user]))
