@@ -256,20 +256,22 @@ def enable (user, channel, word):
 
 # Check disabled commands.
 def disabled (user, channel, word):
+    # In case the admin wants to check on another channel.
+    if len(word) > 1:
+        target_channel = word[1] if word[1].startswith("#") else "#" + word[1]
+    else:
+        target_channel = channel
+    
     # Grab disabled commands list based on ini file.
     command_dict = ini.fill_dict("settings.ini", "Disabled Commands")
     command_list = [
-        "." + command for command in command_dict if channel in command_dict[command]
+        "." + command for command in command_dict if target_channel in command_dict[command]
     ]
     
-    # In case the admin wants to check on another channel.
-    if len(word) > 1:
-        channel = word[1] if word[1].startswith("#") else "#" + word[1]
-    
     if command_list:
-        irc.msg(channel, "Disabled commands for {}: {}".format(channel, " ".join(command_list)))
+        irc.msg(channel, "Disabled commands for {}: {}".format(target_channel, " ".join(command_list)))
     else:
-        irc.msg(channel, "No commands are disabled for {}.".format(channel))
+        irc.msg(channel, "No commands are disabled for {}.".format(target_channel))
 
 
 ###########################################
