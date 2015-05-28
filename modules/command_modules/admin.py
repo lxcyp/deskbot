@@ -189,7 +189,7 @@ def nick (user, channel, word):
 
 
 ###########################################
-#   .disable, .enable and .disabled       #
+#         .disable and .enable            #
 ###########################################
 
 
@@ -211,14 +211,23 @@ def disable (user, channel, word):
     # Add channel to the command object disabled attribute, if not already in it.
     for command in dsbl_list:
         for cmd_name in var.commands:
-            if command in var.commands[cmd_name].aliases:
-                if channel in var.commands[cmd_name].disabled:
+            if (
+                command in var.commands[cmd_name].aliases or
+                (
+                    hasattr(var.commands[cmd_name], "tags") and
+                    command in var.commands[cmd_name].tags
+                )
+            ):
+                if (
+                    channel in var.commands[cmd_name].disabled and
+                    command.startswith(".")
+                ):
                     irc.notice(user, "{} is already disabled in this channel.".format(command))
-                else:
+                elif channel not in var.commands[cmd_name].disabled:
                     var.commands[cmd_name].disabled.append(channel)
                     channel_list = var.commands[cmd_name].disabled
                     ini.add_to_ini("Disabled Commands", cmd_name, "\n".join(channel_list), "settings.ini")
-                    disabled.append(command)
+                    disabled.append(command if command.startswith(".") else ("." + cmd_name))
     
     # Phew. Now check if anything was indeed disabled and what.
     if not disabled:
@@ -239,14 +248,23 @@ def enable (user, channel, word):
     # Remove channel from the command object disabled attribute, if in it.
     for command in enbl_list:
         for cmd_name in var.commands:
-            if command in var.commands[cmd_name].aliases:
-                if channel not in var.commands[cmd_name].disabled:
+            if (
+                command in var.commands[cmd_name].aliases or
+                (
+                    hasattr(var.commands[cmd_name], "tags") and
+                    command in var.commands[cmd_name].tags
+                )
+            ):
+                if (
+                    channel not in var.commands[cmd_name].disabled and
+                    command.startswith(".")
+                ):
                     irc.notice(user, "{} is not disabled in this channel.".format(command))
-                else:
+                elif channel in var.commands[cmd_name].disabled:
                     var.commands[cmd_name].disabled.remove(channel)
                     channel_list = var.commands[cmd_name].disabled
                     ini.add_to_ini("Disabled Commands", cmd_name, "\n".join(channel_list), "settings.ini")
-                    enabled.append(command)
+                    enabled.append(command if command.startswith(".") else ("." + cmd_name))
     
     # Phooey. Now check if anything was indeed enabled and what.
     if not enabled:
@@ -254,7 +272,12 @@ def enable (user, channel, word):
     else:
         irc.msg(channel, "{}: Enabled commands: {}".format(user, " ".join(enabled)))
 
-# Check disabled commands.
+
+###########################################
+#               .disabled                 #
+###########################################
+
+
 def disabled (user, channel, word):
     # In case the admin wants to check on another channel.
     if len(word) > 1:

@@ -20,6 +20,7 @@ def ins_db ():
 def ins_command ():
     var.commands["git"] = type("command", (object,), {})()
     var.commands["git"].method = read
+    var.commands["git"].tags = ["databases", "simpledb"]
     var.commands["git"].aliases = [".git"]
     var.commands["git"].usage = [line.format("{}", n="git") for line in simpledb.command_usage]
 

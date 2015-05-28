@@ -6,6 +6,7 @@ import json, urllib
 def ins_command ():
     var.commands["google"] = type("command", (object,), {})()
     var.commands["google"].method = google
+    var.commands["google"].tags = ["web"]
     var.commands["google"].aliases = [".google", ".g"]
     var.commands["google"].usage = ["{} query here - Look up \"query here\" and display first result."]
 

@@ -17,6 +17,7 @@ def ins_db ():
 def ins_command ():
     var.commands["desktop"] = type("command", (object,), {})()
     var.commands["desktop"].method = read
+    var.commands["desktop"].tags = ["databases", "urldb"]
     var.commands["desktop"].aliases = [
         ".desktop",
         ".dtop",

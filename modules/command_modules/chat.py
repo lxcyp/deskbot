@@ -5,6 +5,7 @@ from ..chatterbotapi import ChatterBotFactory, ChatterBotType
 def ins_command ():
     var.commands["chat"] = type("command", (object,), {})()
     var.commands["chat"].method = chat
+    var.commands["chat"].tags = ["web", "fun"]
     var.commands["chat"].aliases = [".chat"]
     var.commands["chat"].usage = [
         "{} msg - sends msg to cleverbot's api and says the reply in the chat"

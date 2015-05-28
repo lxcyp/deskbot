@@ -5,6 +5,7 @@ import random
 def ins_command ():
     var.commands["decide"] = type("command", (object,), {})()
     var.commands["decide"].method = decide
+    var.commands["decide"].tags = ["other"]
     var.commands["decide"].aliases = [".decide", ".choose"]
     var.commands["decide"].usage = [
         "{} a|b|c|d|... - Decide between a, b, c, ...",

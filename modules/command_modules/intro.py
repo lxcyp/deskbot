@@ -32,6 +32,7 @@ def ins_monitor (message):
 def ins_command ():
     var.commands["intro"] = type("command", (object,), {})()
     var.commands["intro"].method = read
+    var.commands["intro"].tags = ["databases", "simpledb"]
     var.commands["intro"].aliases = [".intro", ".introduction"]
     var.commands["intro"].usage = [
         "{} - See your greet message."

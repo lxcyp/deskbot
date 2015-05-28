@@ -5,6 +5,7 @@ import random
 def ins_command ():
     var.commands["hate"] = type("command", (object,), {})()
     var.commands["hate"].method = hate
+    var.commands["hate"].tags = ["fun"]
     var.commands["hate"].aliases = [".hate"]
     var.commands["hate"].usage = ["{} user - Send user some hateful message."]
 

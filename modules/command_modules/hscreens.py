@@ -17,6 +17,7 @@ def ins_db ():
 def ins_command ():
     var.commands["hscreen"] = type("command", (object,), {})()
     var.commands["hscreen"].method = read
+    var.commands["hscreen"].tags = ["databases", "urldb"]
     var.commands["hscreen"].aliases = [
         ".hscreen",
         ".homescreen",
