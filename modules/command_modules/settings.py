@@ -32,8 +32,8 @@ def set_property (user, channel, word):
     property = word[1]
     value = " ".join(word[2:])
     
-    value = True if value == "true" else False if value == "false" else value
-    var.settings[property] = value
+    in_value = True if value == "true" else False if value == "false" else value
+    var.settings[property] = in_value
     ini.add_to_ini("Settings", property, value, "settings.ini")
     irc.msg(channel, "{}: {} property set to {}.".format(user, property, value))
 
