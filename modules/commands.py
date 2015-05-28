@@ -1,5 +1,6 @@
-import irc, sys, var
+import irc, sys, var, ini
 from command_modules import *
+import time
 
 # Parsing text.
 def read (msg):
@@ -89,9 +90,19 @@ def fill_commands ():
         if hasattr(sys.modules[module], "ins_db"):
             sys.modules[module].ins_db()
     
-    # Add the command aliases to command dictionary.
+    # Disabled commands dictionary. (command:list of channels)
+    dsbl_commands = ini.fill_dict("settings.ini", "Disabled Commands")
+    
     for command in var.commands:
-        var.commands[command].disabled = []
+        # Disable if set to. Give the user some time to read it.
+        if command in dsbl_commands:
+            var.commands[command].disabled = dsbl_commands[command]
+            print "Disabling .{} in: {}".format(command, " ".join(dsbl_commands[command]))
+            time.sleep(0.5)
+        else:
+            var.commands[command].disabled = []
+        
+        # Add aliases to list.
         for alias in var.commands[command].aliases:
             commands[alias] = ident(var.commands[command])
 
