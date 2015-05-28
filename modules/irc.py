@@ -6,6 +6,7 @@ server = ""
 botnick = "deskbot"         # Default bot nick.
 password = ""               # Default NickServ password.
 admin = "spoonm"            # Default admin nickname.
+port = 6667                 # Default server port.
 
 def display_info ():
     print "Nickname: {}".format(botnick)

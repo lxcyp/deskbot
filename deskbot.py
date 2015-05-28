@@ -11,8 +11,6 @@ except IndexError:
     print "No server to connect to was given."
     irc.server = raw_input("Server to connect to: ")
 
-irc.port = 6667
-
 try:
     for i, arg in enumerate(sys.argv):
         if arg in ["-p", "--pass"]:
