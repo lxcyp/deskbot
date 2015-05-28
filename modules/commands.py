@@ -80,15 +80,15 @@ def fill_commands ():
     global commands
     
     for module in sys.modules:
+        # In case the command uses ini files.
+        if hasattr(sys.modules[module], "ins_db"):
+            sys.modules[module].ins_db()
         # Message monitor function.
         if hasattr(sys.modules[module], "ins_monitor"):
             monitor.append(sys.modules[module].ins_monitor)
         # Function that fills var.commands for every command.
         if hasattr(sys.modules[module], "ins_command"):
             sys.modules[module].ins_command()
-        # In case the command uses ini files.
-        if hasattr(sys.modules[module], "ins_db"):
-            sys.modules[module].ins_db()
     
     # Disabled commands dictionary. (command:list of channels)
     dsbl_commands = ini.fill_dict("settings.ini", "Disabled Commands")
