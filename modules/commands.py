@@ -77,16 +77,19 @@ def ident (cmd_obj):
 # Filling the command dictionary in var.
 def fill_commands ():
     global commands
+    
     for module in sys.modules:
-        # In case the command uses ini files.
-        if hasattr(sys.modules[module], "ins_db"):
-            sys.modules[module].ins_db()
         # Message monitor function.
         if hasattr(sys.modules[module], "ins_monitor"):
             monitor.append(sys.modules[module].ins_monitor)
         # Function that fills var.commands for every command.
         if hasattr(sys.modules[module], "ins_command"):
             sys.modules[module].ins_command()
+        # In case the command uses ini files.
+        if hasattr(sys.modules[module], "ins_db"):
+            sys.modules[module].ins_db()
+    
+    # Add the command aliases to command dictionary.
     for command in var.commands:
         var.commands[command].disabled = []
         for alias in var.commands[command].aliases:
