@@ -1,6 +1,6 @@
 from .. import irc, var, ini
 from ..tools import is_identified, prefix
-import random, re, os, sys
+import random, re, os, sys, time
 
 # Taiga quotes list.
 quotes = [
@@ -11,6 +11,21 @@ quotes = [
     "How can I know what to do later when I don't know what to do right now?",
     "It was like a rough, dry wilderness. Also, it was really, really warm..."
 ]
+
+# Initialize databases.
+def ins_db ():
+    # Read channels in which specific commands are disabled.
+    dsbl_channels = ini.fill_dict("settings.ini", "Disabled Commands")
+    
+    # Fill lists.
+    for command in var.commands:
+        if command in dsbl_channels:
+            var.commands[command].disabled = dsbl_channels[command]
+            print "Disabling {} in: {}.".format(command, " ".join(dsbl_channels[command]))
+            time.sleep(0.5) # Give the user time to see it all happening.
+    
+    # MORE TIME!
+    time.sleep(1)
 
 # Fill commands dictionary.
 def ins_command ():
@@ -169,6 +184,8 @@ def disable (user, channel, word):
                     irc.notice(user, "{} is already disabled in this channel.".format(command))
                 else:
                     var.commands[cmd_name].disabled.append(channel)
+                    channel_list = var.commands[cmd_name].disabled
+                    ini.add_to_ini("Disabled Command", cmd_name, "\n".join(channel_list), "settings.ini")
                     disabled.append(command)
     
     # Phew. Now check if anything was indeed disabled and what.
@@ -195,6 +212,8 @@ def enable (user, channel, word):
                     irc.notice(user, "{} is not disabled in this channel.".format(command))
                 else:
                     var.commands[cmd_name].disabled.remove(channel)
+                    channel_list = var.commands[cmd_name].disabled
+                    ini.add_to_ini("Disabled Command", cmd_name, "\n".join(channel_list), "settings.ini")
                     enabled.append(command)
     
     # Phooey. Now check if anything was indeed enabled and what.
