@@ -12,6 +12,12 @@ quotes = [
     "It was like a rough, dry wilderness. Also, it was really, really warm..."
 ]
 
+
+###########################################
+#           ins_command method            #
+###########################################
+
+
 # Fill commands dictionary.
 def ins_command ():
     var.commands["join"] = type("command", (object,), {})()
@@ -46,6 +52,14 @@ def ins_command ():
     var.commands["disable"].method = disable
     var.commands["disable"].aliases = [".disable", ".rm"]
     var.commands["disable"].usage = ["{} .command1 .command2 ... - Disable commands for this channel."]
+    
+    var.commands["disabled"] = type("command", (object,), {})()
+    var.commands["disabled"].method = disabled
+    var.commands["disabled"].aliases = [".disabled", ".rm'd"]
+    var.commands["disabled"].usage = [
+        "{} - List disabled command for this channel.",
+        "{} #channel - List disabled commands for channel."
+    ]
 
     var.commands["enable"] = type("command", (object,), {})()
     var.commands["enable"].method = enable
@@ -79,6 +93,10 @@ def ins_command ():
         "{} message - Restarts with bot with quit message."
     ]
 
+###########################################
+#              ident method               #
+###########################################
+
 # Require NickServ authentication for the admin.
 def ident (f):
     def admin (user, channel, word):
@@ -98,6 +116,12 @@ def ident (f):
         else:
             irc.msg(channel, "{}: You don't have admin rights.".format(user))
     return admin
+
+
+###########################################
+#     .join, .part, .quit and .raw        #
+###########################################
+
 
 # Join a channel.
 def join (user, channel, word):
@@ -127,6 +151,12 @@ def raw (user, channel, word):
     else:
         irc.msg(channel, "{}: Tell me something to send.".format(user))
 
+
+###########################################
+#         .identify and .passwd           #
+###########################################
+
+
 # Sometimes the bot fails to identify with NickServ.
 def identify (user, channel, word):
     irc.identify()
@@ -138,6 +168,12 @@ def passwd (user, channel, word):
     else:
         irc.password = word[1]
         irc.msg(irc.admin, "Password updated.")
+
+
+###########################################
+#                 .nick                   #
+###########################################
+
 
 # Update botnick.
 def nick (user, channel, word):
@@ -151,10 +187,21 @@ def nick (user, channel, word):
             irc.nick(word[1])
             irc.msg(channel, "{}: Nick changed successfully.".format(user))
 
+
+###########################################
+#   .disable, .enable and .disabled       #
+###########################################
+
+
 # Disable commands. Can accept multiple commands.
 def disable (user, channel, word):
     dsbl_list = [cmd for cmd in word if cmd not in [".disable", ".enable"]]
     disabled = []
+    
+    # Should .disable be the only thing issued, check .disabled.
+    if len(word) == 1:
+        disabled(user, channel, word)
+        return
     
     # If there's nothing it can disable...
     if not dsbl_list:
@@ -207,6 +254,29 @@ def enable (user, channel, word):
     else:
         irc.msg(channel, "{}: Enabled commands: {}".format(user, " ".join(enabled)))
 
+# Check disabled commands.
+def disabled (user, channel, word):
+    # Grab disabled commands list based on ini file.
+    command_dict = ini.fill_dict("settings.ini", "Disabled Commands")
+    command_list = [
+        "." + command for command in command_dict if channel in command_dict[command]
+    ]
+    
+    # In case the admin wants to check on another channel.
+    if len(word) > 1:
+        channel = word[1] if word[1].startswith("#") else "#" + word[1]
+    
+    if command_list:
+        irc.msg(channel, "Disabled commands for {}: {}".format(channel, " ".join(command_list)))
+    else:
+        irc.msg(channel, "No commands are disabled for {}.".format(channel))
+
+
+###########################################
+#                 .ctcp                   #
+###########################################
+
+
 # Add CTCP replies.
 def ctcp (user, channel, word):
     # This command can accept only one piece of info.
@@ -242,6 +312,10 @@ def ctcp (user, channel, word):
             irc.msg(channel, "{}: CTCP {} reply removed successfully.".format(user, request))
         else:
             irc.msg(channel, "{}: There's nothing set for CTCP {}.".format(user, request))
+
+###########################################
+#                .restart                 #
+###########################################
 
 # Restart the bot.
 def restart (user, channel, word):
