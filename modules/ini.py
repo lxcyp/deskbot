@@ -59,7 +59,7 @@ def remove_from_ini (section, option, path):
     try:
         config.remove_option(section, option)
     except:
-        print "Not in .ini file."
+        print "Not in .ini file: [{}] {}".format(section, option)
     
     with open(path, 'wb') as iniFile:
         config.write(iniFile)
