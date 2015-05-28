@@ -2,13 +2,17 @@ import irc, sys, var, ini
 from command_modules import *
 import time
 
-# Parsing text.
+###########################################
+#     Interpreting received messages.     #
+###########################################
+
 def read (msg):
     print msg
     
     # Check for server ping.
     if msg.startswith("PING :"):
-        return irc.pong(msg.split(' :')[1])
+        irc.pong(msg.split(' :')[1])
+        return
     
     # If the message received isn't a server ping, proceed.
     user = msg.split('!')[0][1:]
@@ -37,7 +41,9 @@ def read (msg):
     for function in monitor:
         function(msg)
 
-# Treating events.
+###########################################
+#            Treating events.             #
+###########################################
 
 def privmsg (user, channel, content):
     word = [w for w in content.split(' ') if w]
@@ -51,6 +57,7 @@ def notice (user, channel, content):
     # Should the bot fail to identify the first time.
     if user == "NickServ" and "This nickname is registered and" in content:
         irc.identify()
+        
         # Some channels might have +R enabled.
         for channel in var.channels:
             irc.join(channel)
@@ -63,7 +70,11 @@ def ctcp (user, request):
     if request in var.ctcp:
         irc.notice(user, "\001{} {}\001".format(request, var.ctcp[request]))
 
-# Should the user need to be identified, this function is called.
+###########################################
+#    Checking for ident functions and     #
+#    disabled commands.                   #
+###########################################
+
 def ident (cmd_obj):
     module = sys.modules[cmd_obj.method.__module__]
     def dsbl_check (user, channel, word):
@@ -75,7 +86,10 @@ def ident (cmd_obj):
             return cmd_obj.method(user, channel, word)
     return dsbl_check
 
-# Filling the command dictionary in var.
+###########################################
+#       Filling command dictionary.       #
+###########################################
+
 def fill_commands ():
     global commands
     
@@ -83,9 +97,11 @@ def fill_commands ():
         # In case the command uses ini files.
         if hasattr(sys.modules[module], "ins_db"):
             sys.modules[module].ins_db()
+        
         # Message monitor function.
         if hasattr(sys.modules[module], "ins_monitor"):
             monitor.append(sys.modules[module].ins_monitor)
+        
         # Function that fills var.commands for every command.
         if hasattr(sys.modules[module], "ins_command"):
             sys.modules[module].ins_command()
@@ -94,17 +110,22 @@ def fill_commands ():
     dsbl_commands = ini.fill_dict("settings.ini", "Disabled Commands")
     
     for command in var.commands:
+        
         # Disable if set to. Give the user some time to read it.
         if command in dsbl_commands:
             var.commands[command].disabled = dsbl_commands[command]
             print "Disabling .{} in: {}".format(command, " ".join(dsbl_commands[command]))
-            time.sleep(0.5)
+            time.sleep(1)
         else:
             var.commands[command].disabled = []
         
         # Add aliases to list.
         for alias in var.commands[command].aliases:
             commands[alias] = ident(var.commands[command])
+
+###########################################
+#         Local names/variables.          #
+###########################################
 
 # Dictionary responsible for handling commands.
 commands = {}
