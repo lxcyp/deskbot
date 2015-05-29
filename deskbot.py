@@ -61,7 +61,29 @@ for channel in var.channels:
 
 # Main loop. It's tiem.
 while True:
-    msgList = [msg for msg in irc.ircsock.recv(2048).split('\r\n') if msg]
+    line = irc.ircsock.recv(512)
     
-    for message in msgList:
+    # Securi-tea...? Iunno, I'm trying to avoid timing attacks.
+    
+    # If there was a split line last time, append to it.
+    if commands.split_line:
+        commands.split_line += line.split("\r\n")[0]            # Complete the split line.
+        line = "\r\n".join(line.split("\r\n")[1:]) + "\r\n"     # Remove it from line.
+        commands.read(commands.split_line, "")                  # Read split line.
+    
+    # Check for split lines.
+    if not (line.endswith("\r\n") or line.endswith("\r")):
+        commands.split_line = line.split("\r\n")[-1]            # Store beginning of split line.
+        line = "\r\n".join(line.split("\r\n")[:-1])             # Remove it from line.
+    
+    if line.endswith("\r"):
+        line = line.rstrip("\r")
+    
+    if line.startswith("\n"):
+        line = line.lstrip("\n")
+    
+    msg_list = [message for message in line.split('\r\n') if message]
+    
+    # Read messages.
+    for message in msg_list:
         commands.read(message)

@@ -2,12 +2,20 @@ import irc, sys, var, ini
 from command_modules import *
 import time
 
+split_line = ""
+
 ###########################################
 #     Interpreting received messages.     #
 ###########################################
 
-def read (msg):
+def read (msg, *args):
+    global split_line
+    
     print msg
+    
+    # Save a split line.
+    if args:
+        split_line = args[0]
     
     # Check for server ping.
     if msg.startswith("PING :"):
