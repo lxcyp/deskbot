@@ -123,13 +123,16 @@ def fill_commands ():
         if command in dsbl_commands:
             var.commands[command].disabled = dsbl_commands[command]
             print "Disabling .{} in: {}".format(command, " ".join(dsbl_commands[command]))
-            time.sleep(1)
         else:
             var.commands[command].disabled = []
         
         # Add aliases to list.
         for alias in var.commands[command].aliases:
             commands[alias] = ident(var.commands[command])
+    
+    # Give the user some time to read the disabled commands list.
+    if dsbl_commands:
+        time.sleep(2)
 
 ###########################################
 #         Local names/variables.          #
