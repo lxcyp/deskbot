@@ -85,6 +85,7 @@ def send_messages (user):
         # Send the first 4 messages.
         for pair in var.data["messages"][user][0:4]:
             irc.msg(user, "{} sent you: {}".format(pair[0], pair[1]))
+            irc.msg(pair[0], "{} received your message.".format(user))
         
         # Remove the sent messages.
         st_messages = var.data["messages"][user][0:4]
@@ -99,6 +100,7 @@ def send_messages (user):
         # Send every message.
         for pair in var.data["messages"][user]:
             irc.msg(user, "{} sent you: {}".format(pair[0], pair[1]))
+            irc.msg(pair[0], "{} received your message.".format(user))
         
         # Remove them.
         del var.data["messages"][user]
