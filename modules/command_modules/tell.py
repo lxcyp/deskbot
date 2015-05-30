@@ -59,7 +59,7 @@ def leave_message (user, channel, word):
         return
     
     # Check for "hurr Imma tell myself something".
-    if target == user:
+    if target.lower() == user.lower():
         irc.msg(channel, "{}: Do it yourself. I'm not .tell'ing you shit!".format(user))
         return
     
