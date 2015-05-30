@@ -164,7 +164,7 @@ def prefix (user, channel):
 #          Making a CTCP request.         #
 ###########################################
 
-def ctcp_req (user, request):
+def ctcp_req (user, request, *param):
     start = end = time.time()
     reply = ""
         
@@ -176,7 +176,10 @@ def ctcp_req (user, request):
     request = request.upper()
     
     # Send the request.
-    irc.msg(user, "\001{}\001".format(request))
+    if param:
+        irc.msg(user, "\001{} {}\001".format(request, param[0]))
+    else:
+        irc.msg(user, "\001{}\001".format(request))
     
     # Only listen for 20 seconds.
     while (not reply and end - start < 20) or commands.split_line:
