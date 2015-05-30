@@ -15,10 +15,11 @@ def ping (user, channel, word):
     request = random.randrange(10**4, 10**7)
     
     start = time.time()
-    response = ctcp_req(user, "PING {}".format(request))
+    response = ctcp_req(user, "PING", request)
     end = time.time()
     
     if str(request) == response:
         irc.msg(channel, "{}: {} seconds.".format(user, round(end-start, 3)))
     else:
         irc.msg(channel, "{}: Ping over 20 seconds or no reply.".format(user))
+        print response
