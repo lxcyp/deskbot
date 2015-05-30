@@ -58,6 +58,11 @@ def leave_message (user, channel, word):
         irc.msg(channel, "{} is not a valid nickname.".format(target))
         return
     
+    # Check for "hurr Imma tell myself something".
+    if target == user:
+        irc.msg(channel, "{}: Do it yourself. I'm not .tell'ing you shit!".format(user))
+        return
+    
     # Check for repeated messages.
     if target in var.data["messages"]:
         if (user, message) in var.data["messages"][target]:
@@ -77,6 +82,11 @@ def leave_message (user, channel, word):
 
 # Send a user stored messages.
 def send_messages (user):
+    # Be case insensitive, please.
+    for nick in var.data["messages"]:
+        if user.lower() == nick.lower():
+            user = nick
+    
     # There's no use going on if the user isn't in the messages database.
     if user not in var.data["messages"]:
         return
