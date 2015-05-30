@@ -22,4 +22,3 @@ def ping (user, channel, word):
         irc.msg(channel, "{}: {} seconds.".format(user, round(end-start, 3)))
     else:
         irc.msg(channel, "{}: Ping over 20 seconds or no reply.".format(user))
-        print response

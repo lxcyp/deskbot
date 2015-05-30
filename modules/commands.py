@@ -2,6 +2,7 @@ import irc, sys, var, ini
 from command_modules import *
 import time
 
+# Misc. attributes.
 split_line = ""
 
 ###########################################
