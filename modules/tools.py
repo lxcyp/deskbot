@@ -142,8 +142,8 @@ def prefix (user, channel):
         msg_list = [message for message in line.split("\r\n") if message]
         
         for message in msg_list:
-            if re.match(":[^\s]+ \d{3} {} [@|*|=] {}".format(irc.botnick, channel), message):
-                prefix += msg.split(" :", 1)[1].split(" ")
+            if re.match(":[^\s]+ \d{3} " + "{} [@|*|=] {}".format(irc.botnick, channel), message):
+                prefix += filter(bool, message.split(" :", 1)[1].split(" "))
             elif message.endswith("{} {} :End of /NAMES list.".format(irc.botnick, channel)):
                 loop = False
             else:

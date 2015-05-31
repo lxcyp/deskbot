@@ -55,7 +55,7 @@ def read (msg, *args):
 ###########################################
 
 def privmsg (user, channel, content):
-    word = [w for w in content.split(' ') if w]
+    word = filter(bool, content.split(' '))
     
     if len(word) and word[0] in commands:
         commands[word[0]](user, channel, word)
