@@ -100,9 +100,12 @@ def ins_command ():
 # Require NickServ authentication for the admin.
 def ident (f):
     def admin (user, channel, word):
-        if user == irc.admin and is_identified(user):
+        if (
+            (user == irc.admin and is_identified(user)) or
+            word[0] in [".disabled"]
+        ):
             f(user, channel, word)
-        elif word[0] in [".enable", ".disable", ".disabled"] and is_identified(user):
+        elif word[0] in [".enable", ".disable"] and is_identified(user):
             if prefix(user, channel) in [
                 var.settings["op.prefix"],
                 var.settings["ircop.prefix"],
