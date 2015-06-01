@@ -21,6 +21,13 @@ command_usage = [
     "You can also use \x034-re\x0f instead of \x034-replace\x0f."
 ]
 
+# Syntax for providing help.
+syntax = {
+    ("-a", "-add", "--add"):"{} {} url1 url2 ...",
+    ("-rm", "-remove", "--remove"):"{} {} n1,n2 n3 ...",
+    ("-re", "-replace", "--replace"):"{} {} n url"
+}
+
 # Functions
 
 # User-URL database can only be altered by identified users.
@@ -28,9 +35,9 @@ def ident (f):
     def check (user, channel, word):
         try:
             if word[1] in [
-                "-a", "-add",
-                "-rm", "-remove",
-                "-re", "-replace"
+                "-a", "-add", "--add",
+                "-rm", "-remove", "--remove",
+                "-re", "-replace", "--replace"
             ] and not is_identified(user):
                 irc.msg(channel, "{}: Identify with NickServ first.".format(user))
             else:
@@ -63,9 +70,28 @@ def list_function (url_dict, dict_name):
             irc.msg(channel, "Did you mean to use -re {} {}?".format(target, number))
             return
         
+        # Check if a flag was misused.
+        if target.startswith("-"):
+            
+            # Grab tuple containing flag.
+            commands = ()
+            for flags in syntax:
+                if target in flags:
+                    commands = flags
+                    break
+            
+            if commands in syntax:
+                line = syntax[commands].format(word[0], target)
+                irc.msg(channel, "Syntax for {}: {}".format(target, line))
+            else:
+                irc.msg(channel, "{}: Unknown command.".format(user))
+            
+            return
+        
         for nick in url_dict:
             if target.lower() == nick.lower():
                 target = nick
+                break
         
         # Throw a message if the target isn't in the URL database.
         if target not in url_dict:
@@ -117,6 +143,7 @@ def add_function (url_dict, dict_name, filename, sect_name, *args):
         for nick in url_dict:
             if user.lower() == nick.lower():
                 user = nick
+                break
         
         # Create an empty list for a new user.
         if user not in url_dict:
@@ -145,10 +172,12 @@ def delete_function (url_dict, dict_name, filename, sect_name):
     # Removes URLs from the user's list. Will require NickServ authentication.
     def delete_url (user, channel, word):
         del_list = [int(x) - 1 for x in word[2].split(',') if (is_number(x) and int(x) > 0)]
+        del_list += [int(x) - 1 for x in word[2:] if (is_number(x) and int(x) > 0)]
         
         for nick in url_dict:
             if user.lower() == nick.lower():
                 user = nick
+                break
         
         # Wildcard removes everything saved for that user from the database.
         if word[2] == "*" and user in url_dict:
@@ -226,6 +255,7 @@ def replace_function (url_dict, dict_name, filename, sect_name, *args):
         for nick in url_dict:
             if user.lower() == nick.lower():
                 user = nick
+                break
         
         # Try to replace URL using received number.
         try:
