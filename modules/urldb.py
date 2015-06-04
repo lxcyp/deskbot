@@ -58,9 +58,13 @@ def list_function (url_dict, dict_name):
         elif len(word) == 2:
             target = word[1] if not is_number(word[1]) else user
             number = word[1] if is_number(word[1]) else False
+            if target == user and not is_number(word[1]):
+                irc.notice(user, "A reminder that you could just use \x034{}\x0f.".format(word[0]))
         elif len(word) >= 3:
             target = word[1]
             number = word[2]
+            if target == user and not is_number(word[1]):
+                irc.notice(user, "A reminder that you could just use \x034{} {}\x0f.".format(word[0], number))
         
         # Check if it's a URL or a number.
         if target.startswith("http://") or target.startswith("https://"):
