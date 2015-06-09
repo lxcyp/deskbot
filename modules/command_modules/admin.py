@@ -92,6 +92,14 @@ def ins_command ():
         "{} - Restarts the bot.",
         "{} message - Restarts with bot with quit message."
     ]
+    
+    var.commands["ignore"] = type("command", (object,), {})()
+    var.commands["ignore"].method = ignore
+    var.commands["ignore"].aliases = [".ignore"]
+    var.commands["ignore"].usage = [
+        "{} - See ignored users list.",
+        "{} user - Ignore a user."
+    ]
 
 ###########################################
 #              ident method               #
@@ -340,6 +348,25 @@ def ctcp (user, channel, word):
             irc.msg(channel, "{}: CTCP {} reply removed successfully.".format(user, request))
         else:
             irc.msg(channel, "{}: There's nothing set for CTCP {}.".format(user, request))
+
+###########################################
+#                .ignore                  #
+###########################################
+
+def ignore (user, channel, word):
+    if len(word) == 1:
+        irc.notice(user, "Ignored users: {}".format(" ".join(var.ignored)))
+    else:
+        ignored = [nick for nick in word[1:] if nick not in var.ignored]
+        
+        for nick in ignored:
+            ini.add_to_list(nick, "ignored.ini")
+            var.ignored.append(nick)
+        
+        if ignored:
+            irc.msg(channel, "{}: I'll ignore {} from now on.".format(user, ", ".join(ignored)))
+        else:
+            irc.msg(channel, "{}: No new nicks were ignored.".format(user))
 
 ###########################################
 #                .restart                 #

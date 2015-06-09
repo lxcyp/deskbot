@@ -34,8 +34,9 @@ if not os.path.isdir("ini/{}".format(irc.server)):
     os.mkdir("ini/{}".format(irc.server))
     print "Creating ini folder for {}.".format(irc.server)
 
-# Reading the channels, ctcp and settings files.
+# Reading the channels, ignored, ctcp and settings files.
 var.channels = ini.fill_list("channels.ini")
+var.ignored = ini.fill_list("ignored.ini")
 var.ctcp = ini.fill_dict("ctcp.ini", "CTCP")
 var.ctcp = {key:var.ctcp[key][0] for key in var.ctcp}
 var.settings = ini.fill_dict("settings.ini", "Settings")

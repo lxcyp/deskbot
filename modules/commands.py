@@ -57,6 +57,10 @@ def read (msg, *args):
 def privmsg (user, channel, content):
     word = filter(bool, content.split(' '))
     
+    # Ignored people get out.
+    if user in var.ignored:
+        return
+    
     if len(word) and word[0] in commands:
         commands[word[0]](user, channel, word)
     elif len(word) and word[0].startswith("\001"):

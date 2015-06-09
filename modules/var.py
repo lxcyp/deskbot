@@ -4,5 +4,6 @@ data = {}
 ctcp = {}
 settings = {}
 
-# Channels list
+# Lists
 channels = []
+ignored = []
