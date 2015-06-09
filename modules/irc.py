@@ -58,5 +58,5 @@ def kick (channel, target, reason):
 def ban (channel, target, reason):
     ircsock.send("MODE {} +b {} :{}\r\n".format(channel, target, reason))
 
-def mode (target, target_channel, mode):
-    ircsock.send("MODE {} {} {}\r\n".format(target_channel, mode, target))
+def mode (channel, target, mode):
+    ircsock.send("MODE {} {} {}\r\n".format(channel, mode, target))
