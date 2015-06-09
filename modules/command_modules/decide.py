@@ -30,4 +30,10 @@ def decide (user, channel, word):
         else:
             choices = ["Yes.", "No."]
         
-        irc.msg(channel, "{}: {}".format(user, random.choice(choices)))
+        if random.random() < 0.05:
+            if choices == ["Yes.", "No."]:
+                irc.msg(channel, "{}: Maybe.".format(user))
+            else:
+                irc.msg(channel, "{}: Neither.".format(user))
+        else:
+            irc.msg(channel, "{}: {}".format(user, random.choice(choices)))
