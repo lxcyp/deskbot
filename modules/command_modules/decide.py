@@ -30,6 +30,11 @@ def decide (user, channel, word):
         else:
             choices = ["Yes.", "No."]
         
+        # Empty lists can't be taken.
+        if not choices:
+            irc.msg(channel, "{}: Give me some choices, man, come on.".format(user))
+            return
+        
         if random.random() < 0.05:
             if choices == ["Yes.", "No."]:
                 irc.msg(channel, "{}: Maybe.".format(user))
