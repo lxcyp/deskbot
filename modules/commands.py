@@ -128,7 +128,7 @@ def fill_commands ():
         if command in dsbl_commands:
             var.commands[command].disabled = dsbl_commands[command]
             print "Disabling .{} in: {}".format(command, " ".join(dsbl_commands[command]))
-        else:
+        elif not hasattr(var.commands[command], "disabled"):
             var.commands[command].disabled = []
         
         # Add aliases to list.
