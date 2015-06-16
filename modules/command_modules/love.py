@@ -41,9 +41,10 @@ anime_list = [
     "White Album 2",
     "The Garden of Words",
     "Golden Time",
-    "Gekka Shoujo Nozaki-kun",
+    "Gekkan Shoujo Nozaki-kun",
     "Love Hina",
-    "Hanasaku Iroha"
+    "Hanasaku Iroha",
+    "Dantalian no Shoka"
 ]
 
 # The love function!
