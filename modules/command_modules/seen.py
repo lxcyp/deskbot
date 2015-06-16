@@ -5,7 +5,7 @@ import time
 def ins_command ():
     var.commands["seen"] = type("command", (object,), {})()
     var.commands["seen"].method = seen
-    var.commands["seen"].tags = ["fun"]
+    var.commands["seen"].tags = ["other"]
     var.commands["seen"].aliases = [".seen"]
     var.commands["seen"].usage = ["{} user - Be notified of when user was last seen."]
 
