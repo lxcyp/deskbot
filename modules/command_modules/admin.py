@@ -1,5 +1,6 @@
 from .. import irc, var, ini
 from ..tools import is_identified, prefix
+from ..tools import exec_python
 import random, re, os, sys, time
 
 # Taiga quotes list.
@@ -99,6 +100,13 @@ def ins_command ():
     var.commands["ignore"].usage = [
         "{} - See ignored users list.",
         "{} user - Ignore a user."
+    ]
+    
+    var.commands["py"] = type("command", (object,), {})()
+    var.commands["py"].method = py_exec
+    var.commands["py"].aliases = [".exec", ".py", ".python"]
+    var.commands["py"].usage = [
+        "{} line - Execute a line in python in commands.py."
     ]
 
 ###########################################
@@ -376,3 +384,14 @@ def ignore (user, channel, word):
 def restart (user, channel, word):
     irc.quit(" ".join(word[1:]) if len(word) > 1 else random.choice(quotes))
     os.execl(sys.executable, *([sys.executable] + sys.argv + ["-b", irc.botnick]))
+
+###########################################
+#                   .py                   #
+###########################################
+
+# Execute a line given by the admins in commands.py.
+def py_exec (user, channel, word):
+    if len(word) < 2:
+        irc.msg(channel, "{}: You have to give me a line to execute.".format(user))
+    else:
+        exec_python(channel, " ".join(word[1:]))

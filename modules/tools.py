@@ -245,3 +245,11 @@ def nsfw_check (url_pair):
     if "!" in url_pair.split(" ")[1]:
         url_pair = "[\x034NSFW\x0f] {}".format(url_pair.split(" ")[1].strip("!"))
     return url_pair
+
+###########################################
+#    Executing lines by the admin in      #
+#    commands.py                          #
+###########################################
+
+def exec_python (channel, command):
+    commands.exec_python(channel, command)

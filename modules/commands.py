@@ -140,6 +140,16 @@ def fill_commands ():
         time.sleep(2)
 
 ###########################################
+#            Executing lines.             #
+###########################################
+
+def exec_python (channel, command):
+    try:
+        exec(command)
+    except:
+        irc.msg(channel, "Check your line, an exception occurred.")
+
+###########################################
 #         Local names/variables.          #
 ###########################################
 
