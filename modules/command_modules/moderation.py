@@ -59,10 +59,13 @@ def ins_monitor (message):
             channel = message.split(" JOIN ")[1]
         
         # Update user's host.
-        hostmasks[user] = "*!*@" + message.split()[0].split("@")[1]
+        try:
+            hostmasks[user] = "*!*@" + message.split()[0].split("@")[1]
+        except:
+            pass
         
         # Check for akicks.
-        if user in akick_dict or hostmasks[user] in akick_dict:
+        if user in akick_dict or (user in hostmasks and hostmasks[user] in akick_dict):
             entry = user if user in akick_dict else hostmasks[user]
             ak_pairs = akick_dict[entry][:]
         else:
