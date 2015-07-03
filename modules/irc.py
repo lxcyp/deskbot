@@ -5,7 +5,7 @@ ircsock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 server = ""
 botnick = "deskbot"         # Default bot nick.
 password = ""               # Default NickServ password.
-admin = "spoonm"            # Default admin nickname.
+admin = ""                  # Default admin nickname.
 port = 6667                 # Default server port.
 
 def display_info ():
