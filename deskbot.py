@@ -1,30 +1,28 @@
-import os, sys
+import os
+import sys
+import argparse
 from modules import ini, irc, commands, var
 
-os.system("clear")
+os.system("cls" if os.name == "nt" else "clear")
 print "Starting deskbot."
 
+parser = argparse.ArgumentParser()
+parser.add_argument("server", help="Server address to connect the bot to.")
+parser.add_argument("-p", "--port", default=6667, type=int,
+                    help="Port through which the bot will connect to the server.")
+parser.add_argument("-b", "--botnick", default="deskbot",
+                    help="Nickname the bot will use on IRC.")
+parser.add_argument("-a", "--admin", help="Nickname of the admin(supposed to be you).")
+parser.add_argument("-P", "--password",
+                    help="NickServ password, if the bot needs authentication.")
+args = parser.parse_args()
+
 # Grabbing arguments given.
-try:
-    irc.server = sys.argv[1]
-except IndexError:
-    print "No server to connect to was given."
-    irc.server = raw_input("Server to connect to: ")
-
-try:
-    for i, arg in enumerate(sys.argv):
-        if arg in ["-p", "--pass"]:
-            irc.password = sys.argv[i+1].strip("'")
-        elif arg in ["-a", "--admin"]:
-            irc.admin = sys.argv[i+1].strip("'")
-        elif arg in ["-b", "--botnick"]:
-            irc.botnick = sys.argv[i+1].strip("'")
-	elif arg in ["-o", "--port"]:
-            irc.port = int(sys.argv[i+1].strip("'"))
-
-except IndexError:
-    print "Incorrect use of one of the flags."
-    os._exit(0)
+irc.server = args.server
+irc.password = args.password
+irc.admin = args.admin if args.admin else raw_input("Please choose an admin nickname: ")
+irc.botnick = args.botnick
+irc.port = args.port
 
 # Creating ini folder for network, if it doesn't exist.
 if not os.path.isdir("ini"):
