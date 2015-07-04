@@ -82,7 +82,7 @@ def display_track (user, channel):
     
     # If nothing is playing.
     if not track:
-        irc.msg(channel, "{} isn't listening to anything right now.".format(user))
+        irc.msg(channel, "\x0f{} isn't listening to anything right now.".format(user))
         return
     
     # Grab le values.
@@ -98,7 +98,7 @@ def display_track (user, channel):
         return
 
     line = "\x0f{} by {}".format(title, artist)
-    line += " on {}\x0f".format(album) if album else ""
+    line += " on {}\x0f".format(album) if album else "\x0f"
     
     irc.msg(channel, "{} [{}]".format(line, user))
 
