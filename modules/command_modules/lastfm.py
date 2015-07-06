@@ -1,13 +1,13 @@
-###################################################
-#                                                 #
-# Originally, part of this was in a hexchat addon #
-# by TingPing. I went so far as to steal the key  #
-# used to communicate with the API. There wasn't  #
-# any credit where I got the plugin from, and I   #
-# even tweaked it a bit to make it more usable.   #
-# Either way, here's to TingPing. Cheers, mate.   #
-#                                                 #
-###################################################
+#######################################################
+#                                                     #
+#   Originally, part of this was in a hexchat addon   #
+#   by TingPing. I went so far as to steal the key    #
+#   used to communicate with the API. There wasn't    #
+#   any credit where I got the plugin from, and I     #
+#   even tweaked it a bit to make it more usable.     #
+#   Either way, here's to TingPing. Cheers, mate.     #
+#                                                     #
+#######################################################
 
 from __future__ import print_function
 
@@ -104,6 +104,7 @@ def display_track (user, channel):
 
 def get_track(username):
     url = 'http://ws.audioscrobbler.com/2.0/?method=user.getrecentTracks&user={}&api_key={}&format=json'.format(username, KEY)
+    
     try:
         response = urllib_request.urlopen(url)
         text = response.read().decode('utf-8')
