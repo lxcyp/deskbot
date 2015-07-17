@@ -9,13 +9,15 @@ admin = ""                  # Default admin nickname.
 port = 6667                 # Default server port.
 
 def display_info ():
-    print "Nickname: {}".format(botnick)
-    print "Password: {}".format(password)
-    print "Admin: {}".format(admin)
-    print "\nServer: {}".format(server)
+    print "Nickname:    {}".format(botnick)
+    print "Password:    {}".format(password)
+    print "Admin:       {}".format(admin)
+    print "Server:      {}".format(server)
+    print "Port:        {}".format(port)
     time.sleep(1)
 
 def connect (server, port):
+    print "\nAttempting to connect to server using this data..."
     ircsock.connect((server, port))
 
 def pong (ping):
