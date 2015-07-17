@@ -1,6 +1,6 @@
+import re
 from .. import irc, var, ini
 from ..tools import is_identified
-import re
 
 # Require identification with NickServ to send messages.
 def ident (f):

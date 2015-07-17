@@ -1,6 +1,7 @@
+import time
+import random
 from .. import irc, var
 from ..tools import ctcp_req
-import time, random
 
 # Fill command dictionary.
 def ins_command ():

@@ -1,5 +1,5 @@
-from .. import irc, var
 import random
+from .. import irc, var
 
 # Fill command dictionary.
 def ins_command ():

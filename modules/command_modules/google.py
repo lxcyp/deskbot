@@ -1,6 +1,7 @@
-from .. import irc, var
+import json
+import urllib
 from HTMLParser import HTMLParser
-import json, urllib
+from .. import irc, var
 
 # Fill command dictionary.
 def ins_command ():

@@ -1,4 +1,6 @@
-import ini, var, irc
+import ini
+import var
+import irc
 from tools import is_identified, is_number
 from tools import trim, nsfw_check
 

@@ -1,7 +1,7 @@
+import time
 from .. import irc, var, ini
 from ..tools import is_identified
 from ..tools import prefix
-import time
 
 # Fill commands dictionary.
 def ins_command ():

@@ -1,7 +1,11 @@
+import random
+import re
+import os
+import sys
+import time
 from .. import irc, var, ini
 from ..tools import is_identified, prefix
 from ..tools import exec_python, nick_check
-import random, re, os, sys, time
 
 # Taiga quotes list.
 quotes = [
