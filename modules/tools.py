@@ -1,5 +1,9 @@
-import irc, commands, var, ini
-import time, re
+import time
+import re
+import irc
+import commands
+import var
+import ini
 
 ###########################################
 #    Determining whether services will    #
@@ -107,6 +111,32 @@ def is_number (num):
         return True
     except ValueError:
         return False
+
+###########################################
+#         Check if nick is valid.         #
+###########################################
+
+def nick_check ():
+    # We'll give the server a 5 seconds window to reply.
+    irc.ircsock.settimeout(5)
+    
+    try:
+        line = irc.ircsock.recv(512)
+    except socket.timeout:
+        line = ""
+    
+    for msg in [x for x in line.split("\r\n") if x]:
+        # Nick already in use, according to RFC 1459
+        if msg.split()[1] == "433":
+            return True
+        # Erroneous nickname, according to RFC 1459
+        elif msg.split()[1] == "432":
+            return True
+        else:
+            commands.read(msg)
+    
+    irc.ircsock.settimeout(None)
+    return False
 
 ###########################################
 #        Checking users's prefix.         #

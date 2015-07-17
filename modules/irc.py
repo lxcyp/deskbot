@@ -1,4 +1,5 @@
-import socket, time
+import socket
+import time
 
 ircsock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
@@ -29,9 +30,7 @@ def init ():
     time.sleep(2)
 
 def nick (username):
-    global botnick
     ircsock.send("NICK :{}\r\n".format(username))
-    botnick = username
 
 def identify ():
     ircsock.send("PRIVMSG NickServ :IDENTIFY {}\r\n".format(password))

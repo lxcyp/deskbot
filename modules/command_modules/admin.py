@@ -1,6 +1,6 @@
 from .. import irc, var, ini
 from ..tools import is_identified, prefix
-from ..tools import exec_python
+from ..tools import exec_python, nick_check
 import random, re, os, sys, time
 
 # Taiga quotes list.
@@ -204,7 +204,11 @@ def nick (user, channel, word):
             irc.msg(channel, "{}: Invalid nickname.".format(user))
         else:
             irc.nick(word[1])
-            irc.msg(channel, "{}: Nick changed successfully.".format(user))
+            err = nick_check()
+            if err:
+                irc.notice(irc.admin, "{} is erroneous or already in use.".format(word[1]))
+            else:
+                irc.botnick = word[1]
 
 
 ###########################################
