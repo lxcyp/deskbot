@@ -35,7 +35,9 @@ def ins_command ():
     var.commands["intro"].tags = ["databases", "simpledb"]
     var.commands["intro"].aliases = [".intro", ".introduction"]
     var.commands["intro"].usage = [
-        "{} - See your greet message."
+        "{} - See your greet message.",
+        "{} -set intro - Set your greet message.",
+        "{} -rm - Remove your greet message."
     ]
 
 # This command uses a database.
