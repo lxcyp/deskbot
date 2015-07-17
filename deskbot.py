@@ -1,32 +1,28 @@
-import os, sys
+import os
+import sys
+import argparse
 from modules import ini, irc, commands, var
 
-os.system("clear")
+os.system("cls" if os.name == "nt" else "clear")
 print "Starting deskbot."
 
+parser = argparse.ArgumentParser()
+parser.add_argument("server", help="Server address to connect the bot to.")
+parser.add_argument("-p", "--port", default=6667, type=int,
+                    help="Port through which the bot will connect to the server.")
+parser.add_argument("-b", "--botnick", default="deskbot",
+                    help="Nickname the bot will use on IRC.")
+parser.add_argument("-a", "--admin", help="Nickname of the admin(supposed to be you).")
+parser.add_argument("-P", "--password",
+                    help="NickServ password, if the bot needs authentication.")
+args = parser.parse_args()
+
 # Grabbing arguments given.
-try:
-    irc.server = sys.argv[1]
-except IndexError:
-    print "No server to connect to was given."
-    irc.server = raw_input("Server to connect to: ")
-
-irc.port = 6667
-
-try:
-    for i, arg in enumerate(sys.argv):
-        if arg in ["-p", "--pass"]:
-            irc.password = sys.argv[i+1].strip("'")
-        elif arg in ["-a", "--admin"]:
-            irc.admin = sys.argv[i+1].strip("'")
-        elif arg in ["-b", "--botnick"]:
-            irc.botnick = sys.argv[i+1].strip("'")
-	elif arg in ["-o", "--port"]:
-            irc.port = int(sys.argv[i+1].strip("'"))
-
-except IndexError:
-    print "Incorrect use of one of the flags."
-    os._exit(0)
+irc.server = args.server
+irc.password = args.password
+irc.admin = args.admin if args.admin else raw_input("Please choose an admin nickname: ")
+irc.botnick = args.botnick
+irc.port = args.port
 
 # Creating ini folder for network, if it doesn't exist.
 if not os.path.isdir("ini"):
@@ -36,8 +32,9 @@ if not os.path.isdir("ini/{}".format(irc.server)):
     os.mkdir("ini/{}".format(irc.server))
     print "Creating ini folder for {}.".format(irc.server)
 
-# Reading the channels, ctcp and settings files.
+# Reading the channels, ignored, ctcp and settings files.
 var.channels = ini.fill_list("channels.ini")
+var.ignored = ini.fill_list("ignored.ini")
 var.ctcp = ini.fill_dict("ctcp.ini", "CTCP")
 var.ctcp = {key:var.ctcp[key][0] for key in var.ctcp}
 var.settings = ini.fill_dict("settings.ini", "Settings")
@@ -56,7 +53,6 @@ commands.fill_commands()
 irc.connect(irc.server, irc.port)
 irc.display_info()
 irc.init()
-irc.identify()
 
 # Joining predetermined channels.
 for channel in var.channels:
@@ -64,7 +60,29 @@ for channel in var.channels:
 
 # Main loop. It's tiem.
 while True:
-    msgList = [msg for msg in irc.ircsock.recv(2048).split('\r\n') if msg]
+    line = irc.ircsock.recv(512)
     
-    for message in msgList:
+    # Securi-tea...? Iunno, I'm trying to avoid timing attacks.
+    
+    # If there was a split line last time, append to it.
+    if commands.split_line:
+        commands.split_line += line.split("\r\n")[0]            # Complete the split line.
+        line = "\r\n".join(line.split("\r\n")[1:]) + "\r\n"     # Remove it from line.
+        commands.read(commands.split_line, "")                  # Read split line.
+    
+    # Check for split lines.
+    if not (line.endswith("\r\n") or line.endswith("\r")):
+        commands.split_line = line.split("\r\n")[-1]            # Store beginning of split line.
+        line = "\r\n".join(line.split("\r\n")[:-1])             # Remove it from line.
+    
+    if line.endswith("\r"):
+        line = line.rstrip("\r")
+    
+    if line.startswith("\n"):
+        line = line.lstrip("\n")
+    
+    msg_list = [message for message in line.split('\r\n') if message]
+    
+    # Read messages.
+    for message in msg_list:
         commands.read(message)

@@ -1,11 +1,13 @@
-from .. import irc, var
+import json
+import urllib
 from HTMLParser import HTMLParser
-import json, urllib
+from .. import irc, var
 
 # Fill command dictionary.
 def ins_command ():
     var.commands["google"] = type("command", (object,), {})()
     var.commands["google"].method = google
+    var.commands["google"].tags = ["web"]
     var.commands["google"].aliases = [".google", ".g"]
     var.commands["google"].usage = ["{} query here - Look up \"query here\" and display first result."]
 

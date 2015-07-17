@@ -13,35 +13,43 @@ def ident (f):
 # Fill commands dictionary.
 def ins_command ():
     var.commands["set"] = type("command", (object,), {})()
-    var.commands["set"].method = read
+    var.commands["set"].method = set_property
     var.commands["set"].aliases = [".set"]
-    var.commands["set"].usage = [
-        "{} property value - Change property value.",
-        "{} del property - Delete property."
-    ]
+    var.commands["set"].usage = ["{} property value - Change property value."]
+    
+    var.commands["del"] = type("command", (object,), {})()
+    var.commands["del"].method = delete_property
+    var.commands["del"].aliases = [".del",".delete"]
+    var.commands["del"].usage = ["{} property - Delete property from settings file."]
 
-# Command method.
-def read (user, channel, word):
+# .set method.
+def set_property (user, channel, word):
     # This command always accepts two pieces of information.
     if len(word) < 3:
-        irc.msg(channel, "{}: Wrong syntax. Check .help".format(user))
+        irc.msg(channel, "{}: Wrong syntax. Check .help {}".format(user, word[0]))
         return
     
     property = word[1]
     value = " ".join(word[2:])
     
-    if property == "del":
-        property = word[2]
-        
-        # Check if the property is set.
-        if property not in var.settings:
-            irc.msg(channel, "{}: {} doesn't exist.".format(user, property))
-        else:
-            del var.settings[property]
-            ini.remove_from_ini("Settings", property, "settings.ini")
-            irc.msg(channel, "{}: {} removed.".format(user, property))
+    in_value = True if value == "true" else False if value == "false" else value
+    var.settings[property] = in_value
+    ini.add_to_ini("Settings", property, value, "settings.ini")
+    irc.msg(channel, "{}: {} property set to {}.".format(user, property, value))
+
+# .del method.
+def delete_property (user, channel, word):
+    # This command needs a property name.
+    if len(word) < 2:
+        irc.msg(channel, "{}: Wrong syntax. Check .help {}".format(user, word[0]))
+        return
+    
+    property = word[1]
+    
+    # Check if property is set.
+    if property not in var.settings:
+        irc.msg(channel, "{}: {} doesn't exist.".format(user, property))
     else:
-        value = True if value == "true" else False if value == "false" else value
-        var.settings[property] = value
-        ini.add_to_ini("Settings", property, value, "settings.ini")
-        irc.msg(channel, "{}: {} property set to {}.".format(user, property, value))
+        del var.settings[property]
+        ini.remove_from_ini("Settings", property, "settings.ini")
+        irc.msg(channel, "{}: {} removed.".format(user, property))

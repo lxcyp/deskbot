@@ -32,6 +32,7 @@ def ins_monitor (message):
 def ins_command ():
     var.commands["intro"] = type("command", (object,), {})()
     var.commands["intro"].method = read
+    var.commands["intro"].tags = ["databases", "simpledb"]
     var.commands["intro"].aliases = [".intro", ".introduction"]
     var.commands["intro"].usage = [
         "{} - See your greet message."
@@ -49,7 +50,7 @@ def ins_db ():
     
     access_db = simpledb.access_function(var.data["intros"], "intro")
     mod_entry = simpledb.mod_function(var.data["intros"], "intro", "intros.ini", "Introductions")
-    rm_entry = simpledb.rm_function(var.data["intros"], "intro", "intros.ini", "Introducions")
+    rm_entry = simpledb.rm_function(var.data["intros"], "intro", "intros.ini", "Introductions")
 
 # Command method.
 def read (user, channel, word):

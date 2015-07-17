@@ -1,4 +1,6 @@
-import ini, var, irc
+import ini
+import var
+import irc
 from tools import is_identified, is_number
 from tools import trim, nsfw_check
 
@@ -21,6 +23,13 @@ command_usage = [
     "You can also use \x034-re\x0f instead of \x034-replace\x0f."
 ]
 
+# Syntax for providing help.
+syntax = {
+    ("-a", "-add", "--add"):"{} {} url1 url2 ...",
+    ("-rm", "-remove", "--remove"):"{} {} n1,n2 n3 ...",
+    ("-re", "-replace", "--replace"):"{} {} n url"
+}
+
 # Functions
 
 # User-URL database can only be altered by identified users.
@@ -28,9 +37,9 @@ def ident (f):
     def check (user, channel, word):
         try:
             if word[1] in [
-                "-a", "-add",
-                "-rm", "-remove",
-                "-re", "-replace"
+                "-a", "-add", "--add",
+                "-rm", "-remove", "--remove",
+                "-re", "-replace", "--replace"
             ] and not is_identified(user):
                 irc.msg(channel, "{}: Identify with NickServ first.".format(user))
             else:
@@ -51,13 +60,44 @@ def list_function (url_dict, dict_name):
         elif len(word) == 2:
             target = word[1] if not is_number(word[1]) else user
             number = word[1] if is_number(word[1]) else False
+            if target == user and not is_number(word[1]):
+                irc.notice(user, "A reminder that you could just use \x034{}\x0f.".format(word[0]))
         elif len(word) >= 3:
             target = word[1]
             number = word[2]
+            if target == user and not is_number(word[1]):
+                irc.notice(user, "A reminder that you could just use \x034{} {}\x0f.".format(word[0], number))
+        
+        # Check if it's a URL or a number.
+        if target.startswith("http://") or target.startswith("https://"):
+            irc.msg(channel, "Did you mean to use -a {}?".format(target))
+            return
+        elif number and target.isdigit():
+            irc.msg(channel, "Did you mean to use -re {} {}?".format(target, number))
+            return
+        
+        # Check if a flag was misused.
+        if target.startswith("-"):
+            
+            # Grab tuple containing flag.
+            commands = ()
+            for flags in syntax:
+                if target in flags:
+                    commands = flags
+                    break
+            
+            if commands in syntax:
+                line = syntax[commands].format(word[0], target)
+                irc.msg(channel, "Syntax for {}: {}".format(target, line))
+            else:
+                irc.msg(channel, "{}: Unknown command.".format(user))
+            
+            return
         
         for nick in url_dict:
             if target.lower() == nick.lower():
                 target = nick
+                break
         
         # Throw a message if the target isn't in the URL database.
         if target not in url_dict:
@@ -93,7 +133,7 @@ def list_function (url_dict, dict_name):
     return list_urls
 
 # Return the add_url function. Can receive a different max number.
-def add_function (url_dict, dict_name, file, sect_name, *args):
+def add_function (url_dict, dict_name, filename, sect_name, *args):
     
     # This is the max number of URLs to save.
     max = args[0] if args and args[0] > 0 else 5
@@ -109,6 +149,7 @@ def add_function (url_dict, dict_name, file, sect_name, *args):
         for nick in url_dict:
             if user.lower() == nick.lower():
                 user = nick
+                break
         
         # Create an empty list for a new user.
         if user not in url_dict:
@@ -126,26 +167,28 @@ def add_function (url_dict, dict_name, file, sect_name, *args):
             else:
                 break
         
-        ini.add_to_ini(sect_name, user, '\n'.join(url_dict[user]), file)
+        ini.add_to_ini(sect_name, user, '\n'.join(url_dict[user]), filename)
         irc.msg(channel, "{}: {} added.".format(user, sect_name))
     
     return add_url
 
 # Returns the delete function.
-def delete_function (url_dict, dict_name, file, sect_name):
+def delete_function (url_dict, dict_name, filename, sect_name):
 
     # Removes URLs from the user's list. Will require NickServ authentication.
     def delete_url (user, channel, word):
         del_list = [int(x) - 1 for x in word[2].split(',') if (is_number(x) and int(x) > 0)]
+        del_list += [int(x) - 1 for x in word[2:] if (is_number(x) and int(x) > 0)]
         
         for nick in url_dict:
             if user.lower() == nick.lower():
                 user = nick
+                break
         
         # Wildcard removes everything saved for that user from the database.
         if word[2] == "*" and user in url_dict:
             del url_dict[user]
-            ini.remove_from_ini(sect_name, user, file)
+            ini.remove_from_ini(sect_name, user, filename)
             irc.msg(channel, "{}: All of your {} were removed successfully.".format(user, dict_name))
             return
         
@@ -172,18 +215,18 @@ def delete_function (url_dict, dict_name, file, sect_name):
         # Delete entry in database for an empty list and remove user from ini file.
         if not url_dict[user]:
             del url_dict[user]
-            ini.remove_from_ini(sect_name, user, file)
+            ini.remove_from_ini(sect_name, user, filename)
             irc.msg(channel, "{}: All of your {} were removed successfully.".format(user, dict_name))
             return
         
-        ini.add_to_ini(sect_name, user, '\n'.join(url_dict[user]), file)
+        ini.add_to_ini(sect_name, user, '\n'.join(url_dict[user]), filename)
         irc.msg(channel, "{}: {} deleted.".format(user, sect_name))
     
     return delete_url
 
 # Return the replace function for the URL database command.
 # Can also accept a different max number.
-def replace_function (url_dict, dict_name, file, sect_name, *args):
+def replace_function (url_dict, dict_name, filename, sect_name, *args):
     
     # This is the max number of URLs to save.
     max = args[0] if args and args[0] > 0 else 5
@@ -218,11 +261,12 @@ def replace_function (url_dict, dict_name, file, sect_name, *args):
         for nick in url_dict:
             if user.lower() == nick.lower():
                 user = nick
+                break
         
         # Try to replace URL using received number.
         try:
             url_dict[user][number] = trim(word[3])
-            ini.add_to_ini(sect_name, user, '\n'.join(url_dict[user]), file)
+            ini.add_to_ini(sect_name, user, '\n'.join(url_dict[user]), filename)
             irc.msg(channel, "{}: {} replaced.".format(user, sect_name.rstrip("s")))
         
         # It might not work, if the list isn't long enough.

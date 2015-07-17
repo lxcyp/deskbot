@@ -1,20 +1,24 @@
-import socket, time
+import socket
+import time
 
 ircsock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
 server = ""
 botnick = "deskbot"         # Default bot nick.
 password = ""               # Default NickServ password.
-admin = "spoonm"            # Default admin nickname.
+admin = ""                  # Default admin nickname.
+port = 6667                 # Default server port.
 
 def display_info ():
-    print "Nickname: {}".format(botnick)
-    print "Password: {}".format(password)
-    print "Admin: {}".format(admin)
-    print "\nServer: {}".format(server)
+    print "Nickname:    {}".format(botnick)
+    print "Password:    {}".format(password)
+    print "Admin:       {}".format(admin)
+    print "Server:      {}".format(server)
+    print "Port:        {}".format(port)
     time.sleep(1)
 
 def connect (server, port):
+    print "\nAttempting to connect to server using this data..."
     ircsock.connect((server, port))
 
 def pong (ping):
@@ -26,9 +30,7 @@ def init ():
     time.sleep(2)
 
 def nick (username):
-    global botnick
     ircsock.send("NICK :{}\r\n".format(username))
-    botnick = username
 
 def identify ():
     ircsock.send("PRIVMSG NickServ :IDENTIFY {}\r\n".format(password))
@@ -50,7 +52,6 @@ def part (target, message):
 
 def quit (reason):
     ircsock.send("QUIT :{}\r\n".format(reason))
-    raise SystemExit
 
 def kick (channel, target, reason):
     ircsock.send("KICK {} {} :{}\r\n".format(channel, target, reason))
@@ -58,5 +59,5 @@ def kick (channel, target, reason):
 def ban (channel, target, reason):
     ircsock.send("MODE {} +b {} :{}\r\n".format(channel, target, reason))
 
-def mode (target, target_channel, mode):
-    ircsock.send("MODE {} {} {}\r\n".format(target_channel, mode, target))
+def mode (channel, target, mode):
+    ircsock.send("MODE {} {} {}\r\n".format(channel, mode, target))

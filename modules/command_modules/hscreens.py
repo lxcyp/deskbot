@@ -17,6 +17,7 @@ def ins_db ():
 def ins_command ():
     var.commands["hscreen"] = type("command", (object,), {})()
     var.commands["hscreen"].method = read
+    var.commands["hscreen"].tags = ["databases", "urldb"]
     var.commands["hscreen"].aliases = [
         ".hscreen",
         ".homescreen",
@@ -31,11 +32,11 @@ ident = urldb.ident
 def read (user, channel, word):    
     if len(word) < 3:
         list_urls(user, channel, word)
-    elif word[1] in ["-a", "-add"]:
+    elif word[1] in ["-a", "-add", "--add"]:
         add_url(user, channel, word)
-    elif word[1] in ["-rm", "-remove"]:
+    elif word[1] in ["-rm", "-remove", "--remove"]:
         delete_url(user, channel, word)
-    elif word[1] in ["-re", "-replace"]:
+    elif word[1] in ["-re", "-replace", "--replace"]:
         replace_url(user, channel, word)
     else:
         list_urls(user, channel, word)
@@ -45,4 +46,3 @@ list_urls = None
 add_url = None
 delete_url = None
 replace_url = None
-

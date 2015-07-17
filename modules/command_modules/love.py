@@ -1,10 +1,11 @@
-from .. import irc, var
 import random
+from .. import irc, var
 
 # Fill command dictionary.
 def ins_command ():
     var.commands["love"] = type("command", (object,), {})()
     var.commands["love"].method = love
+    var.commands["love"].tags = ["fun"]
     var.commands["love"].aliases = [".love"]
     var.commands["love"].usage = ["{} user - Send user some love."]
 
@@ -26,6 +27,26 @@ love_list = [
     "hugs {} in a loving manner."
 ]
 
+# spoonm's anime list!
+anime_list = [
+    "Shigatsu wa Kimi no Uso",
+    "Clannad",
+    "Clannad ~After Story~",
+    "Barakamon",
+    "Gosick",
+    "Bokura wa Minna Kawaisou",
+    "Zankyou no Terror",
+    "So Ra No Wo To",
+    "Angel Beats!",
+    "White Album 2",
+    "The Garden of Words",
+    "Golden Time",
+    "Gekkan Shoujo Nozaki-kun",
+    "Love Hina",
+    "Hanasaku Iroha",
+    "Dantalian no Shoka"
+]
+
 # The love function!
 def love (user, channel, word):
     # If nothing other than '.love' is issued, make the user the target.
@@ -36,5 +57,7 @@ def love (user, channel, word):
     
     if target == irc.botnick:
         irc.msg(channel, "{}: y-you too!".format(user))
+    elif target == "spoonm":
+        irc.msg(channel, "\001ACTION watches {} with spoonm.\001".format(random.choice(anime_list)))
     else:
         irc.msg(channel, "\001ACTION " + random.choice(love_list).format(target) + "\001")

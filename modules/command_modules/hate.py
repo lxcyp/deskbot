@@ -1,10 +1,11 @@
-from .. import irc, var
 import random
+from .. import irc, var
 
 # Fill command dictionary.
 def ins_command ():
     var.commands["hate"] = type("command", (object,), {})()
     var.commands["hate"].method = hate
+    var.commands["hate"].tags = ["fun"]
     var.commands["hate"].aliases = [".hate"]
     var.commands["hate"].usage = ["{} user - Send user some hateful message."]
 
