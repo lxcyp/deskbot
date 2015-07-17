@@ -24,7 +24,9 @@ love_list = [
     "dances a slow waltz with {}.",
     "gives {} a delicious steak.",
     "bakes a cake for {}.",
-    "hugs {} in a loving manner."
+    "hugs {} in a loving manner.",
+    "nibbles on {}'s left ear.",
+    "reads {}'s future."
 ]
 
 # spoonm's anime list!
@@ -44,7 +46,8 @@ anime_list = [
     "Gekkan Shoujo Nozaki-kun",
     "Love Hina",
     "Hanasaku Iroha",
-    "Dantalian no Shoka"
+    "Dantalian no Shoka",
+    "Plastic Memories"
 ]
 
 # The love function!
