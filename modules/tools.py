@@ -126,13 +126,16 @@ def nick_check ():
         line = ""
     
     for msg in [x for x in line.split("\r\n") if x]:
-        # Nick already in use, according to RFC 1459
-        if msg.split()[1] == "433":
-            return True
-        # Erroneous nickname, according to RFC 1459
-        elif msg.split()[1] == "432":
-            return True
-        else:
+        try:
+            # Nick already in use, according to RFC 1459
+            if msg.split()[1] == "433":
+                return True
+            # Erroneous nickname, according to RFC 1459
+            elif msg.split()[1] == "432":
+                return True
+            else:
+                commands.read(msg)
+        except IndexError:
             commands.read(msg)
     
     irc.ircsock.settimeout(None)
