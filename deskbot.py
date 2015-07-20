@@ -1,7 +1,7 @@
 import os
 import sys
 import argparse
-from modules import ini, irc, commands, var
+from modules import ini, irc, commands, var, tools
 
 os.system("cls" if os.name == "nt" else "clear")
 print "Starting deskbot."
@@ -50,9 +50,26 @@ var.settings = {
 commands.fill_commands()
 
 # Connecting and display info.
-irc.connect(irc.server, irc.port)
-irc.display_info()
-irc.init()
+def connect ():
+    irc.connect(irc.server, irc.port)
+    irc.display_info()
+    irc.init()
+    
+    # In case there was an error during initial info exchange.
+    if tools.nick_check():
+        # Append _ to botnick and try to reconnect.
+        irc.nick(irc.botnick + "_")
+        
+        # Checking for an error again.
+        if tools.nick_check():
+            irc.quit()
+            print "Probably erroneous nickname. ({}_ didn't work.)".format(irc.botnick)
+            raise SystemExit
+        else:
+            irc.botnick += "_"
+            print "Nick was already in use. Using {} now.".format(irc.botnick)
+
+connect()
 
 # Joining predetermined channels.
 for channel in var.channels:
@@ -61,6 +78,12 @@ for channel in var.channels:
 # Main loop. It's tiem.
 while True:
     line = irc.ircsock.recv(512)
+    
+    # Check if the connection has been interrupted.
+    if len(line) == 0:
+        print "The bot has been disconnected from the server."
+        print "Attempting to reconnect now..."
+        connect()
     
     # Securi-tea...? Iunno, I'm trying to avoid timing attacks.
     

@@ -1,7 +1,7 @@
 import socket
 import time
 
-ircsock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+ircsock = None
 
 server = ""
 botnick = "deskbot"         # Default bot nick.
@@ -18,7 +18,9 @@ def display_info ():
     time.sleep(1)
 
 def connect (server, port):
+    global ircsock
     print "\nAttempting to connect to server using this data..."
+    ircsock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     ircsock.connect((server, port))
 
 def pong (ping):
