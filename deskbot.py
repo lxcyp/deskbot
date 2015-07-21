@@ -1,7 +1,9 @@
 import os
 import sys
 import argparse
+import time
 from modules import ini, irc, commands, var, tools
+from socket import error as socket_error
 
 os.system("cls" if os.name == "nt" else "clear")
 print "Starting deskbot."
@@ -51,7 +53,20 @@ commands.fill_commands()
 
 # Connecting and display info.
 def connect ():
-    irc.connect(irc.server, irc.port)
+    try:
+        irc.connect(irc.server, irc.port)
+    except socket_error:
+        print "Couldn't connect to {}... (Retrying in 15 seconds.)".format(irc.server)
+        
+        # Make irc.ircsock an object with a recv() function.
+        irc.ircsock = type("socket", (object,), {
+            "recv": lambda *x: ""
+        })()
+        
+        # Wait for 15 seconds before attempting to reconnect.
+        time.sleep(15)
+        return
+    
     irc.display_info()
     irc.init()
     
@@ -69,6 +84,7 @@ def connect ():
             irc.botnick += "_"
             print "Nick was already in use. Using {} now.".format(irc.botnick)
 
+irc.display_info()
 connect()
 
 # Joining predetermined channels.
