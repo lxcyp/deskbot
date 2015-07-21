@@ -84,7 +84,6 @@ def connect ():
             irc.botnick += "_"
             print "Nick was already in use. Using {} now.".format(irc.botnick)
 
-irc.display_info()
 connect()
 
 # Joining predetermined channels.
