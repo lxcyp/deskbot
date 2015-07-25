@@ -434,5 +434,5 @@ def uptime (user, channel, word):
         ("{} days, ".format(days) if days else "") +
         ("{} hours, ".format(hours) if hours else "") +
         ("{} minutes, ".format(min) if min else "") +
-        "{} seconds.".format(up)
+        "{} seconds.".format(round(up, 2))
     ))
