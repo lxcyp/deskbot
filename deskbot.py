@@ -7,6 +7,7 @@ from socket import error as socket_error
 
 os.system("cls" if os.name == "nt" else "clear")
 print "Starting deskbot."
+var.start_point = time.time()   # Store time when the bot starts.
 
 parser = argparse.ArgumentParser()
 parser.add_argument("server", help="Server address to connect the bot to.")

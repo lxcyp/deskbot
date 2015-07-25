@@ -112,6 +112,13 @@ def ins_command ():
     var.commands["py"].usage = [
         "{} line - Execute a line in python in commands.py."
     ]
+    
+    var.commands["uptime"] = type("command", (object,), {})()
+    var.commands["uptime"].method = uptime
+    var.commands["uptime"].aliases = [".uptime"]
+    var.commands["uptime"].usage = [
+        "{} - Get information about bot uptime."
+    ]
 
 ###########################################
 #              ident method               #
@@ -397,9 +404,35 @@ def restart (user, channel, word):
 #                   .py                   #
 ###########################################
 
-# Execute a line given by the admins in commands.py.
+# Execute a line given by the admin in commands.py.
 def py_exec (user, channel, word):
     if len(word) < 2:
         irc.msg(channel, "{}: You have to give me a line to execute.".format(user))
     else:
         exec_python(channel, " ".join(word[1:]))
+
+###########################################
+#                .uptime                  #
+###########################################
+
+def uptime (user, channel, word):
+    up = time.time() - var.start_point
+    days = hours = min = 0
+    
+    # Count stuff the old way.
+    if up >= 86400:
+        days = up // 86400
+        up = up % 86400
+    if up >= 3600:
+        hours = up // 3600
+        up = up % 3600
+    if up >= 60:
+        min = up // 60
+        up = up % 60
+    
+    irc.msg(channel, "The bot has been running for {}.".format(
+        ("{} days, ".format(days) if days else "") +
+        ("{} hours, ".format(hours) if hours else "") +
+        ("{} minutes, ".format(min) if min else "") +
+        "{} seconds.".format(up)
+    ))
