@@ -129,7 +129,9 @@ def ident (f):
     def admin (user, channel, word):
         if (
             (user == irc.admin and is_identified(user)) or
-            word[0] in [".disabled"]
+            word[0] in [
+                ".disabled", ".uptime"
+            ]   # Commands in this module anyone can use.
         ):
             f(user, channel, word)
         elif word[0] in [".enable", ".disable"] and is_identified(user):
@@ -421,13 +423,13 @@ def uptime (user, channel, word):
     
     # Count stuff the old way.
     if up >= 86400:
-        days = up // 86400
+        days = int(up // 86400)
         up = up % 86400
     if up >= 3600:
-        hours = up // 3600
+        hours = int(up // 3600)
         up = up % 3600
     if up >= 60:
-        min = up // 60
+        min = int(up // 60)
         up = up % 60
     
     irc.msg(channel, "The bot has been running for {}.".format(
