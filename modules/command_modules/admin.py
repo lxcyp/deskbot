@@ -382,16 +382,35 @@ def ignore (user, channel, word):
     if len(word) == 1:
         irc.notice(user, "Ignored users: {}".format(" ".join(var.ignored)))
     else:
-        ignored = [nick for nick in word[1:] if nick not in var.ignored]
+        nick_list = [nick for nick in word[1:] if nick not in var.ignored]
         
-        for nick in ignored:
+        for nick in nick_list:
             ini.add_to_list(nick, "ignored.ini")
             var.ignored.append(nick)
         
-        if ignored:
+        if nick_list:
             irc.msg(channel, "{}: I'll ignore {} from now on.".format(user, ", ".join(ignored)))
         else:
             irc.msg(channel, "{}: No new nicks were ignored.".format(user))
+
+###########################################
+#               .unignore                 #
+###########################################
+
+def unignore (user, channel, word):
+    if len(word) == 1:
+        irc.notice(user, "Ignored users: {}".format(" ".join(var.ignored)))
+    else:
+        nick_list = [nick for nick in word[1:] if nick in var.ignored]
+        
+        for nick in nick_list:
+            ini.remove_from_list(nick, "ignored.ini")
+            var.ignored.remove(nick)
+        
+        if nick_list:
+            irc.msg(channel, "{}: I'll stop ignoring {} from now on.".format(user, ", ".join(nick_list)))
+        else:
+            irc.msg(channel, "{}: No nicks were unignored.".format(user))
 
 ###########################################
 #                .restart                 #
