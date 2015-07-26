@@ -58,8 +58,7 @@ def connect ():
 
 def s_out ():
     global split_line
-    global lo_msgs
-    
+        
     line = irc.ircsock.recv(512)
     s_arr = []
     
@@ -69,9 +68,12 @@ def s_out ():
         print "Attempting to reconnect now..."
         connect()
     
-    # Remove leftover '\n'/'\r' from a not that split line.
+    # Remove leftover '\n' from a not that split line.
     line = line.lstrip("\n")
-    line = line.rstrip("\r")
+    
+    # Complete CR-LF.
+    if line.endswith("\r"):
+        line += "\n"
     
     # If there was a split line last time, complete it.
     if split_line:

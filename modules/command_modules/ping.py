@@ -13,7 +13,7 @@ def ins_command ():
 
 # Command method.
 def ping (user, channel, word):
-    request = random.randrange(10**4, 10**7)
+    request = int(time.time())
     
     start = time.time()
     response = ctcp_req(user, "PING", request)

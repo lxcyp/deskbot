@@ -147,7 +147,7 @@ def ctcp_req (user, request, *param):
         irc.msg(user, "\001{}\001".format(request))
     
     # Only listen for 20 seconds.
-    while (not reply and end - start < 20):
+    while (not reply) and end - start < 20:
         for message in feed.s_out():
             if (
                 (not reply) and
