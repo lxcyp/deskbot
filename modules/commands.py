@@ -1,6 +1,7 @@
+import time
+import thread
 import irc, sys, var, ini
 from command_modules import *
-import time
 
 # Misc. attributes.
 split_line = ""
@@ -62,7 +63,8 @@ def privmsg (user, channel, content):
         return
     
     if len(word) and word[0] in commands:
-        commands[word[0]](user, channel, word)
+        # Temporary test with threads.
+        thread.start_new_thread(commands[word[0]], (user, channel, word))
     elif len(word) and word[0].startswith("\001"):
         ctcp(user, word[0].strip("\001"))
 
