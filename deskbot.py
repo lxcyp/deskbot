@@ -1,7 +1,7 @@
 import os
 import time
 import argparse
-from modules import ini, irc, handler, var
+from modules import ini, irc, handler, var, feed
 from socket import error as socket_error
 
 os.system("cls" if os.name == "nt" else "clear")
