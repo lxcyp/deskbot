@@ -106,6 +106,14 @@ def ins_command ():
         "{} user - Ignore a user."
     ]
     
+    var.commands["unignore"] = type("command", (object,), {})()
+    var.commands["unignore"].method = unignore
+    var.commands["unignore"].aliases = [".unignore"]
+    var.commands["unignore"].usage = [
+        "{} - See ignored users list.",
+        "{} user - Stop ignoring ignored user."
+    ]
+    
     var.commands["py"] = type("command", (object,), {})()
     var.commands["py"].method = py_exec
     var.commands["py"].aliases = [".exec", ".py", ".python"]
@@ -118,6 +126,13 @@ def ins_command ():
     var.commands["uptime"].aliases = [".uptime"]
     var.commands["uptime"].usage = [
         "{} - Get information about bot uptime."
+    ]
+    
+    var.commands["update"] = type("command", (object,), {})()
+    var.commands["update"].method = update
+    var.commands["update"].aliases = [".reload", ".update"]
+    var.commands["update"].usage = [
+        "{} - Pull from github repo and restart bot."
     ]
 
 ###########################################
@@ -420,6 +435,14 @@ def unignore (user, channel, word):
 def restart (user, channel, word):
     irc.quit(" ".join(word[1:]) if len(word) > 1 else random.choice(quotes))
     os.execl(sys.executable, *([sys.executable] + sys.argv + ["-b", irc.botnick]))
+
+###########################################
+#                 .update                 #
+###########################################
+
+def update (user, channel, word):
+    os.system("git pull https://github.com/skewerr/deskbot development")
+    restart(user, channel, word)    # Pull from repo and restart bot.
 
 ###########################################
 #                   .py                   #
