@@ -26,7 +26,8 @@ love_list = [
     "bakes a cake for {}.",
     "hugs {} in a loving manner.",
     "nibbles on {}'s left ear.",
-    "reads {}'s future."
+    "reads {}'s future.",
+    "whispers in {}'s ear."
 ]
 
 # spoonm's anime list!
