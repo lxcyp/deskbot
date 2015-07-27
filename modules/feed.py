@@ -3,6 +3,7 @@ import irc
 import var
 import tools
 from socket import error as socket_error
+from socket import timeout as socket_timeout
 
 # This module's variables.
 split_line = ""
@@ -33,6 +34,7 @@ def connect ():
     
     irc.display_info()
     irc.init()
+    irc.ircsock.settimeout(irc.timeout)
     
     # In case the nickname throws errors.
     while tools.nick_check() and len(irc.botnick) < 20:
@@ -60,7 +62,12 @@ def connect ():
 def s_out ():
     global split_line
         
-    line = irc.ircsock.recv(512)
+    try:
+        line = irc.ircsock.recv(512)
+    except socket_timeout:
+        print("ERROR: socket timeout.")
+        line = ""
+    
     s_arr = []
     
     # Check if the connection has been interrupted.
