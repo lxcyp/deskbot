@@ -41,7 +41,7 @@ def add_default_se (se_dict):
             key:
                 True if default_dict[key][0] == "true"
                 else False if default_dict[key][0] == "false"
-                else deafult_dict[key][0]
+                else default_dict[key][0]
             for key in default_dict.keys()
         }
     else:
