@@ -32,7 +32,7 @@ def ins_command ():
     var.commands["lastfm"] = type("command", (object,), {})()
     var.commands["lastfm"].method = lastfm
     var.commands["lastfm"].aliases = [".lfm", ".np", ".lastfm"]
-    var.commands["lastfm"].tags = ["other", "fun"]
+    var.commands["lastfm"].tags = ["other", "fun", "web"]
     var.commands["lastfm"].usage = [
         "{} - Show the world what you're listening to right now.",
         "{} user - Check user's last.fm now playing data.",
