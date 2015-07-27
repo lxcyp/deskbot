@@ -146,8 +146,8 @@ def fill_commands ():
 def exec_python (channel, command):
     try:
         exec(command)
-    except:
-        irc.msg(channel, "Check your line, an exception occurred.")
+    except Exception as exc:
+        irc.msg(channel, "Exception: {}".format(exc))
 
 ###########################################
 #         Local names/variables.          #
