@@ -7,15 +7,12 @@ Check the wiki for a list of commands and how to make your own.
 
 To start the bot:
 ```
-python deskbot.py server [-p 'password'] [-b 'botnick'] [-a 'admin_nick'] [-o 'port']
+python deskbot.py server [-P password] [-b botnick] [-a admin_nick] [-p port]
 ```
 
-Note: be sure to place the server there if you'll be using the flags.
+I'm using argparse for the flags. Check `python deskbot.py -h` to learn how to use them.
 
-Note 2: brackets shouldn't be there, they're just to say "optional".
+Default port is 6667.
+Default botnick is deskbot.
 
-Note 3: the bot will pick up the first argument for the server, so...
-
-Note 4: I can't into flags, I'm sorry. ;-;
-
-Note 5: Default port is 6667 if not specified.
+**There is no default admin nickname or NickServ password.**

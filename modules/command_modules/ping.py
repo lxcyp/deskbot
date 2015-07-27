@@ -7,13 +7,13 @@ from ..tools import ctcp_req
 def ins_command ():
     var.commands["ping"] = type("command", (object,), {})()
     var.commands["ping"].method = ping
-    var.commands["ping"].tags = ["other"]
+    var.commands["ping"].tags = ["other", "ctcp"]
     var.commands["ping"].aliases = [".ping", ".pingme"]
     var.commands["ping"].usage = ["{} - Get ping'd."]
 
 # Command method.
 def ping (user, channel, word):
-    request = random.randrange(10**4, 10**7)
+    request = int(time.time())
     
     start = time.time()
     response = ctcp_req(user, "PING", request)

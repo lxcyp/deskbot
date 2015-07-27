@@ -1,9 +1,10 @@
-import time
 import re
 import irc
-import commands
 import var
 import ini
+import time
+import feed
+import handler
 
 ###########################################
 #    Determining whether services will    #
@@ -15,35 +16,12 @@ def set_auth_method ():
     irc.msg("NickServ", "STATUS {}".format(irc.botnick))
     response = ""
     
-    while not response or commands.split_line:
-        line = irc.ircsock.recv(512)
-        
-        # Securi-tea
-        
-        if commands.split_line:
-            commands.split_line += line.split("\r\n")[0]
-            line = "\r\n".join(line.split("\r\n")[1:]) + "\r\n"
-            commands.read(commands.split_line, "")
-        
-        if not (line.endswith("\r\n") or line.endswith("\r")):
-            commands.split_line = line.split("\r\n")[-1]
-            line = "\r\n".join(line.split("\r\n")[:-1])
-        
-        if line.endswith("\r"):
-            line = line.rstrip("\r")
-        
-        if line.startswith("\n"):
-            line = line.lstrip("\n")
-        
-        # End of securi-tea
-        
-        msg_list = [message for message in line.split("\r\n") if message]
-        
-        for message in msg_list:
+    while not response:
+        for message in feed.s_out():
             if not response and message.startswith(":NickServ"):
                 response = message
             else:
-                commands.read(message)
+                handler.read(message)
     
     if "STATUS" in response:
         var.settings["ident.method"] = "STATUS"
@@ -65,35 +43,12 @@ def is_identified (user):
     irc.msg("NickServ", "{} {}".format(var.settings["ident.method"], user))
     response = ""
     
-    while not response or commands.split_line:
-        line = irc.ircsock.recv(512)
-        
-        # Securi-tea
-        
-        if commands.split_line:
-            commands.split_line += line.split("\r\n")[0]
-            line = "\r\n".join(line.split("\r\n")[1:]) + "\r\n"
-            commands.read(commands.split_line, "")
-        
-        if not (line.endswith("\r\n") or line.endswith("\r")):
-            commands.split_line = line.split("\r\n")[-1]
-            line = "\r\n".join(line.split("\r\n")[:-1])
-        
-        if line.endswith("\r"):
-            line = line.rstrip("\r")
-        
-        if line.startswith("\n"):
-            line = line.lstrip("\n")
-        
-        # End of securi-tea
-        
-        msg_list = [message for message in line.split("\r\n") if message]
-        
-        for message in msg_list:
+    while not response:
+        for message in feed.s_out():
             if message.startswith(":NickServ"):
                 response = message
             else:
-                commands.read(message)
+                handler.read(message)
     
     # Checking with ident.method for NickServ auth.
     if var.settings["ident.method"] == "STATUS":
@@ -121,19 +76,22 @@ def nick_check ():
     irc.ircsock.settimeout(5)
     
     try:
-        line = irc.ircsock.recv(512)
+        msg_list = feed.s_out()
     except socket.timeout:
-        line = ""
+        msg_list = []
     
-    for msg in [x for x in line.split("\r\n") if x]:
-        # Nick already in use, according to RFC 1459
-        if msg.split()[1] == "433":
-            return True
-        # Erroneous nickname, according to RFC 1459
-        elif msg.split()[1] == "432":
-            return True
-        else:
-            commands.read(msg)
+    for msg in msg_list:
+        try:
+            # Nick already in use, according to RFC 1459
+            if msg.split()[1] == "433":
+                return True
+            # Erroneous nickname, according to RFC 1459
+            elif msg.split()[1] == "432":
+                return True
+            else:
+                handler.read(msg)
+        except IndexError:
+            handler.read(msg)
     
     irc.ircsock.settimeout(None)
     return False
@@ -147,37 +105,14 @@ def prefix (user, channel):
     irc.ircsock.send("NAMES {}\n".format(channel))
     prefix, loop = [], True
     
-    while loop or commands.split_line:
-        line = irc.ircsock.recv(512)
-        
-        # Securi-tea
-        
-        if commands.split_line:
-            commands.split_line += line.split("\r\n")[0]
-            line = "\r\n".join(line.split("\r\n")[1:]) + "\r\n"
-            commands.read(commands.split_line, "")
-        
-        if not (line.endswith("\r\n") or line.endswith("\r")):
-            commands.split_line = line.split("\r\n")[-1]
-            line = "\r\n".join(line.split("\r\n")[:-1])
-        
-        if line.endswith("\r"):
-            line = line.rstrip("\r")
-        
-        if line.startswith("\n"):
-            line = line.lstrip("\n")
-        
-        # End of securi-tea
-        
-        msg_list = [message for message in line.split("\r\n") if message]
-        
-        for message in msg_list:
+    while loop:
+        for message in feed.s_out():
             if re.match(":[^\s]+ \d{3} " + "{} [@|*|=] {}".format(irc.botnick, channel), message):
                 prefix += filter(bool, message.split(" :", 1)[1].split(" "))
             elif message.endswith("{} {} :End of /NAMES list.".format(irc.botnick, channel)):
                 loop = False
             else:
-                commands.read(message)
+                handler.read(message)
     
     # Now that the list is complete, let's make a dictionary.
     prefix = {nick[1:] if len(nick) > 1 else nick[0]:nick[0] for nick in prefix}
@@ -212,31 +147,8 @@ def ctcp_req (user, request, *param):
         irc.msg(user, "\001{}\001".format(request))
     
     # Only listen for 20 seconds.
-    while (not reply and end - start < 20) or commands.split_line:
-        line = irc.ircsock.recv(512)
-        
-        # Securi-tea
-        
-        if commands.split_line:
-            commands.split_line += line.split("\r\n")[0]
-            line = "\r\n".join(line.split("\r\n")[1:]) + "\r\n"
-            commands.read(commands.split_line, "")
-        
-        if not (line.endswith("\r\n") or line.endswith("\r")):
-            commands.split_line = line.split("\r\n")[-1]
-            line = "\r\n".join(line.split("\r\n")[:-1])
-        
-        if line.endswith("\r"):
-            line = line.rstrip("\r")
-        
-        if line.startswith("\n"):
-            line = line.lstrip("\n")
-        
-        # End of securi-tea
-        
-        msg_list = [message for message in line.split("\r\n") if message]
-        
-        for message in msg_list:
+    while (not reply) and end - start < 20:
+        for message in feed.s_out():
             if (
                 (not reply) and
                 request in message and
@@ -245,7 +157,8 @@ def ctcp_req (user, request, *param):
             ):
                 reply = message.split(request, 1)[1].strip("\001").lstrip()
             else:
-                commands.read(message)
+                handler.read(message)
+        
         end = time.time()
     
     # Return the reply, if it got one.
@@ -278,8 +191,8 @@ def nsfw_check (url_pair):
 
 ###########################################
 #    Executing lines by the admin in      #
-#    commands.py                          #
+#    handler.py                           #
 ###########################################
 
 def exec_python (channel, command):
-    commands.exec_python(channel, command)
+    handler.exec_python(channel, command)

@@ -1,24 +1,26 @@
 import socket
 import time
 
-ircsock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+ircsock = None
 
-server = ""
-botnick = "deskbot"         # Default bot nick.
+server   = ""
+botnick  = "deskbot"        # Default bot nick.
 password = ""               # Default NickServ password.
-admin = ""                  # Default admin nickname.
-port = 6667                 # Default server port.
+admin    = ""               # Default admin nickname.
+port     = 6667             # Default server port.
 
 def display_info ():
-    print "Nickname:    {}".format(botnick)
-    print "Password:    {}".format(password)
-    print "Admin:       {}".format(admin)
-    print "Server:      {}".format(server)
-    print "Port:        {}".format(port)
+    print("Nickname:    {}".format(botnick))
+    print("Password:    {}".format(password))
+    print("Admin:       {}".format(admin))
+    print("Server:      {}".format(server))
+    print("Port:        {}".format(port))
     time.sleep(1)
 
 def connect (server, port):
-    print "\nAttempting to connect to server using this data..."
+    global ircsock
+    print("\nAttempting to connect to server using this data...")
+    ircsock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     ircsock.connect((server, port))
 
 def pong (ping):
@@ -34,11 +36,20 @@ def nick (username):
 
 def identify ():
     ircsock.send("PRIVMSG NickServ :IDENTIFY {}\r\n".format(password))
-    print("Trying to identify with NickServ.")
+    print("\nTrying to identify with NickServ.\n")
     time.sleep(1)
 
 def msg (target, string):
-    ircsock.send("PRIVMSG {} :{}\r\n".format(target, string))
+    line = "PRIVMSG {} :{}".format(target, string)
+    
+    # Lines that make more than 1.2 messages are just mean.
+    if len(line) > (612 - 2*len("PRIVMSG {} :".format(target))):
+        ircsock.send("PRIVMSG {} :<text was too long>\r\n".format(target))
+    elif len(line) > 510:
+        ircsock.send(line[:511] + "\r\n")
+        msg(target, line[512:])
+    else:
+        ircsock.send(line + "\r\n")
 
 def notice (target, string):
     ircsock.send("NOTICE {} :{}\r\n".format(target, string))

@@ -63,6 +63,11 @@ def leave_message (user, channel, word):
         irc.msg(channel, "{}: Do it yourself. I'm not .tell'ing you shit!".format(user))
         return
     
+    # The bot won't tell itself something.
+    if target.lower() == irc.botnick.lower():
+        irc.msg(channel, "{}: I'm right here, say it to my face!".format(user))
+        return
+    
     # Check for repeated messages.
     if target in var.data["messages"]:
         if (user, message) in var.data["messages"][target]:

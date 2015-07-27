@@ -1,10 +1,15 @@
+#!/usr/bin/env python
+
 import os
-import sys
+import time
 import argparse
-from modules import ini, irc, commands, var
+from modules import ini, irc, var
+from modules import handler, feed
+from modules import settings
 
 os.system("cls" if os.name == "nt" else "clear")
-print "Starting deskbot."
+print("Starting deskbot.")
+var.start_point = time.time()   # Store time when the bot starts.
 
 parser = argparse.ArgumentParser()
 parser.add_argument("server", help="Server address to connect the bot to.")
@@ -34,55 +39,14 @@ if not os.path.isdir("ini/{}".format(irc.server)):
 
 # Reading the channels, ignored, ctcp and settings files.
 var.channels = ini.fill_list("channels.ini")
-var.ignored = ini.fill_list("ignored.ini")
-var.ctcp = ini.fill_dict("ctcp.ini", "CTCP")
-var.ctcp = {key:var.ctcp[key][0] for key in var.ctcp}
-var.settings = ini.fill_dict("settings.ini", "Settings")
-var.settings = {
-    key:
-        True if var.settings[key][0] == "true"
-        else False if var.settings[key][0] == "false"
-        else var.settings[key][0]
-    for key in var.settings
-}
+var.ignored  = ini.fill_list("ignored.ini")
+var.ctcp     = settings.ctcp()
+var.settings = settings.settings()
 
-# Filling commands.
-commands.fill_commands()
-
-# Connecting and display info.
-irc.connect(irc.server, irc.port)
-irc.display_info()
-irc.init()
-
-# Joining predetermined channels.
-for channel in var.channels:
-    irc.join(channel)
+handler.fill_commands()
+feed.connect()
 
 # Main loop. It's tiem.
 while True:
-    line = irc.ircsock.recv(512)
-    
-    # Securi-tea...? Iunno, I'm trying to avoid timing attacks.
-    
-    # If there was a split line last time, append to it.
-    if commands.split_line:
-        commands.split_line += line.split("\r\n")[0]            # Complete the split line.
-        line = "\r\n".join(line.split("\r\n")[1:]) + "\r\n"     # Remove it from line.
-        commands.read(commands.split_line, "")                  # Read split line.
-    
-    # Check for split lines.
-    if not (line.endswith("\r\n") or line.endswith("\r")):
-        commands.split_line = line.split("\r\n")[-1]            # Store beginning of split line.
-        line = "\r\n".join(line.split("\r\n")[:-1])             # Remove it from line.
-    
-    if line.endswith("\r"):
-        line = line.rstrip("\r")
-    
-    if line.startswith("\n"):
-        line = line.lstrip("\n")
-    
-    msg_list = [message for message in line.split('\r\n') if message]
-    
-    # Read messages.
-    for message in msg_list:
-        commands.read(message)
+    for message in feed.s_out():
+        handler.read(message)

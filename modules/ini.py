@@ -7,7 +7,10 @@ import var, irc
 def fill_dict (filename, section):
     config = ConfigParser.RawConfigParser()
     config.optionxform = str
-    config.read("ini/{}/{}".format(irc.server, filename))
+    config.read(
+        "ini/{}/{}".format(irc.server, filename) if not filename.startswith("ini/")
+        else filename
+    )
     
     rd_dict = {}
     
@@ -19,7 +22,11 @@ def fill_dict (filename, section):
 
 # Return list of lines in a file without "\n" at the end.
 def fill_list (filename):
-    with open("ini/{}/{}".format(irc.server, filename), "a+") as list_file:
+    with open(
+        "ini/{}/{}".format(irc.server, filename) if not filename.startswith("ini/")
+        else filename
+        , "a+"
+    ) as list_file:
         rd_list = [line.strip() for line in list_file]
     return rd_list
 
@@ -66,14 +73,22 @@ def remove_from_ini (section, option, path):
 
 # Add line to a list file.
 def add_to_list (line, filename):
-    with open("ini/{}/{}".format(irc.server, filename), "a+") as list_file:
+    with open(
+        "ini/{}/{}".format(irc.server, filename) if not filename.startswith("ini/")
+        else filename
+        , "a+"
+    ) as list_file:
         # Write line to file if it isn't already there.
         if line + "\n" not in list_file.readlines():
             list_file.write(line + "\n")
 
 # Remove line from a list file.
 def remove_from_list (line, filename):
-    with open("ini/{}/{}".format(irc.server, filename), "r+") as list_file:
+    with open(
+        "ini/{}/{}".format(irc.server, filename) if not filename.startswith("ini/")
+        else filename
+        , "r+"
+    ) as list_file:
         # List every line in the file.
         lines = list_file.readlines()
         # Go to the beginning of file.

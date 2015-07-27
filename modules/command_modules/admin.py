@@ -106,11 +106,33 @@ def ins_command ():
         "{} user - Ignore a user."
     ]
     
+    var.commands["unignore"] = type("command", (object,), {})()
+    var.commands["unignore"].method = unignore
+    var.commands["unignore"].aliases = [".unignore"]
+    var.commands["unignore"].usage = [
+        "{} - See ignored users list.",
+        "{} user - Stop ignoring ignored user."
+    ]
+    
     var.commands["py"] = type("command", (object,), {})()
     var.commands["py"].method = py_exec
     var.commands["py"].aliases = [".exec", ".py", ".python"]
     var.commands["py"].usage = [
         "{} line - Execute a line in python in commands.py."
+    ]
+    
+    var.commands["uptime"] = type("command", (object,), {})()
+    var.commands["uptime"].method = uptime
+    var.commands["uptime"].aliases = [".uptime"]
+    var.commands["uptime"].usage = [
+        "{} - Get information about bot uptime."
+    ]
+    
+    var.commands["update"] = type("command", (object,), {})()
+    var.commands["update"].method = update
+    var.commands["update"].aliases = [".reload", ".update"]
+    var.commands["update"].usage = [
+        "{} - Pull from github repo and restart bot."
     ]
 
 ###########################################
@@ -122,7 +144,9 @@ def ident (f):
     def admin (user, channel, word):
         if (
             (user == irc.admin and is_identified(user)) or
-            word[0] in [".disabled"]
+            word[0] in [
+                ".disabled", ".uptime"
+            ]   # Commands in this module anyone can use.
         ):
             f(user, channel, word)
         elif word[0] in [".enable", ".disable"] and is_identified(user):
@@ -373,16 +397,35 @@ def ignore (user, channel, word):
     if len(word) == 1:
         irc.notice(user, "Ignored users: {}".format(" ".join(var.ignored)))
     else:
-        ignored = [nick for nick in word[1:] if nick not in var.ignored]
+        nick_list = [nick for nick in word[1:] if nick not in var.ignored]
         
-        for nick in ignored:
+        for nick in nick_list:
             ini.add_to_list(nick, "ignored.ini")
             var.ignored.append(nick)
         
-        if ignored:
+        if nick_list:
             irc.msg(channel, "{}: I'll ignore {} from now on.".format(user, ", ".join(ignored)))
         else:
             irc.msg(channel, "{}: No new nicks were ignored.".format(user))
+
+###########################################
+#               .unignore                 #
+###########################################
+
+def unignore (user, channel, word):
+    if len(word) == 1:
+        irc.notice(user, "Ignored users: {}".format(" ".join(var.ignored)))
+    else:
+        nick_list = [nick for nick in word[1:] if nick in var.ignored]
+        
+        for nick in nick_list:
+            ini.remove_from_list(nick, "ignored.ini")
+            var.ignored.remove(nick)
+        
+        if nick_list:
+            irc.msg(channel, "{}: I'll stop ignoring {} from now on.".format(user, ", ".join(nick_list)))
+        else:
+            irc.msg(channel, "{}: No nicks were unignored.".format(user))
 
 ###########################################
 #                .restart                 #
@@ -394,12 +437,46 @@ def restart (user, channel, word):
     os.execl(sys.executable, *([sys.executable] + sys.argv + ["-b", irc.botnick]))
 
 ###########################################
+#                 .update                 #
+###########################################
+
+def update (user, channel, word):
+    os.system("git pull https://github.com/skewerr/deskbot development")
+    restart(user, channel, word)    # Pull from repo and restart bot.
+
+###########################################
 #                   .py                   #
 ###########################################
 
-# Execute a line given by the admins in commands.py.
+# Execute a line given by the admin in commands.py.
 def py_exec (user, channel, word):
     if len(word) < 2:
         irc.msg(channel, "{}: You have to give me a line to execute.".format(user))
     else:
         exec_python(channel, " ".join(word[1:]))
+
+###########################################
+#                .uptime                  #
+###########################################
+
+def uptime (user, channel, word):
+    up = time.time() - var.start_point
+    days = hours = min = 0
+    
+    # Count stuff the old way.
+    if up >= 86400:
+        days = int(up // 86400)
+        up = up % 86400
+    if up >= 3600:
+        hours = int(up // 3600)
+        up = up % 3600
+    if up >= 60:
+        min = int(up // 60)
+        up = up % 60
+    
+    irc.msg(channel, "Uptime: {}.".format(
+        ("{} days, ".format(days) if days else "") +
+        ("{} hours, ".format(hours) if hours else "") +
+        ("{} minutes, ".format(min) if min else "") +
+        "{} seconds".format(round(up, 2))
+    ))

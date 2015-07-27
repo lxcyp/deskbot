@@ -5,7 +5,7 @@ from ..tools import ctcp_req
 def ins_command ():
     var.commands["version"] = type("command", (object,), {})()
     var.commands["version"].method = version
-    var.commands["version"].tags = ["other"]
+    var.commands["version"].tags = ["other", "ctcp"]
     var.commands["version"].aliases = [".version", ".ver"]
     var.commands["version"].usage = [
         "{} - Display your version CTCP reply.",

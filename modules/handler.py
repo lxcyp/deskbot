@@ -1,6 +1,6 @@
+import time
 import irc, sys, var, ini
 from command_modules import *
-import time
 
 # Misc. attributes.
 split_line = ""
@@ -12,7 +12,7 @@ split_line = ""
 def read (msg, *args):
     global split_line
     
-    print msg
+    print(msg)
     
     # Save a split line.
     if args:
@@ -127,7 +127,7 @@ def fill_commands ():
         # Disable if set to. Give the user some time to read it.
         if command in dsbl_commands:
             var.commands[command].disabled = dsbl_commands[command]
-            print "Disabling .{} in: {}".format(command, " ".join(dsbl_commands[command]))
+            print("WARNING: Disabling .{} in: {}".format(command, " ".join(dsbl_commands[command])))
         elif not hasattr(var.commands[command], "disabled"):
             var.commands[command].disabled = []
         
@@ -146,8 +146,8 @@ def fill_commands ():
 def exec_python (channel, command):
     try:
         exec(command)
-    except:
-        irc.msg(channel, "Check your line, an exception occurred.")
+    except Exception as exc:
+        irc.msg(channel, "Exception: {}".format(exc))
 
 ###########################################
 #         Local names/variables.          #

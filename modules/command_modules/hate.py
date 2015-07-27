@@ -20,7 +20,10 @@ hate_list = [
     "staples {}'s ears.",
     "gives {} the middle finger.",
     "eviscerates {} in a non-loving manner.",
-    "calls 911 and tells the cops {} raped her cousin."
+    "calls 911 and tells the cops {} raped her cousin.",
+    "gives {} bad news.",
+    "throws rotten flesh on {}.",
+    "thinks {} has cooties."
 ]
 
 # The hate function!
