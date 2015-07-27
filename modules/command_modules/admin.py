@@ -474,7 +474,7 @@ def uptime (user, channel, word):
         min = int(up // 60)
         up = up % 60
     
-    irc.msg(channel, "The bot has been running for {}.".format(
+    irc.msg(channel, "Uptime: {}.".format(
         ("{} days, ".format(days) if days else "") +
         ("{} hours, ".format(hours) if hours else "") +
         ("{} minutes, ".format(min) if min else "") +
