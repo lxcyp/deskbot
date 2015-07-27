@@ -53,6 +53,10 @@ def ident (f):
 
 # Insert message monitor.
 def ins_monitor (line_obj):
+    # We're tracking users, so...
+    if not hasattr(line_obj, "user"):
+        return
+    
     user = line_obj.user
         
     # The user joins a channel.
