@@ -12,34 +12,19 @@ def ins_command ():
     var.commands["remind"].tags = ["other"]
     var.commands["remind"].aliases = [".remind", ".remindme"]
     var.commands["remind"].usage = [
-        "{} t message here. - Get a reminder in t minutes.",
-        "{} j message here. - Get a reminder on the next time you join."
+        "{} time message here. - Get a reminder in time minutes.",
+        "{} onjoin message here. - Get a reminder on the next time you join."
     ]
 
 # Insert a message monitor.
-def ins_monitor (message):
+def ins_monitor (line_obj):
     # No point going further if there's no reminder.
     if not onjoin_rem:
         return
     
-    # Parse for user and event.
-    user = message.split("!")[0][1:]
-    try:
-        event = message.split(' ')[1]
-    except IndexError:
-        event = ''
-    
-    if event in ["JOIN"]:
-        # Grab channel name.
-        try:
-            channel = message.split(" :")[1]
-        except IndexError:
-            channel = message.split(" JOIN ")[1]
-        
-        # Check with the dictionary if he has a set reminder.
-        if user in onjoin_rem:
-            irc.msg(channel, "{}: {}".format(user, onjoin_rem[user]))
-            del onjoin_rem[user]
+    if line_obj.event == "JOIN" and line_obj.user in onjoin_rem:
+        irc.msg(channel, "{}: {}".format(line_obj.user, onjoin_rem[line_obj.user]))
+        del onjoin_rem[line_obj.user]
 
 # Command method.
 def remind (user, channel, word):

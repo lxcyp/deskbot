@@ -12,15 +12,9 @@ def ident (f):
     return check
 
 # Insert a message monitor to look for user activity.
-def ins_monitor (message):
-    user = message.split("!")[0][1:]
-    try:
-        event = message.split(' ')[1]
-    except IndexError:
-        event = ''
-    
-    if event in ["JOIN", "PRIVMSG"]:
-        send_messages(user)
+def ins_monitor (line_obj):
+    if line_obj.event in ["JOIN", "PRIVMSG"]:
+        send_messages(line_obj.user)
 
 # Fill commands dictionary.
 def ins_command ():

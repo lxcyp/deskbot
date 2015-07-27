@@ -52,19 +52,12 @@ def ident (f):
     return seen
 
 # Insert message monitor.
-def ins_monitor (message):
-    user = message.split("!")[0][1:]
-    try:
-        event = message.split(' ')[1]
-    except IndexError:
-        event = ''
+def ins_monitor (line_obj):
+    user = line_obj.user
+    channel = line_obj.channel if line_obj.channel != irc.botnick else line_obj.user
     
     # The user joins a channel.
-    if event == "JOIN":
-        try:
-            channel = message.split(" :")[1]
-        except IndexError:
-            channel = message.split(" JOIN ")[1]
+    if line_obj.event == "JOIN":
         
         # Stop if the channel is on the untracked list.
         if channel in var.data["not_track"]:
@@ -77,8 +70,9 @@ def ins_monitor (message):
         var.data["seen"][user] = last_seen
     
     # The user leaves a channel.
-    if event == "PART":
-        channel = message.split(" PART ")[1].split(" :")[0]
+    if line_obj.event == "PART":
+        user = line_obj.user
+        channel = line_obj.channel
         
         # Stop if the channel is on the untracked list.
         if channel in var.data["not_track"]:
@@ -91,9 +85,7 @@ def ins_monitor (message):
         var.data["seen"][user] = last_seen
         
     # A channel message is received.
-    elif event == "PRIVMSG":
-        channel = message.split(' ')[2] if message.split(' ')[2] != irc.botnick else user
-        content = message.split(' :', 1)[1] if len(message.split(' :')) > 1 else ''
+    elif line_obj.event == "PRIVMSG":
         
         # Stop if the channel is on the untracked list.
         if channel in var.data["not_track"]:
@@ -101,7 +93,7 @@ def ins_monitor (message):
         
         timestamp = " ".join(time.ctime().split(" ")[1:])
         last_seen = [
-            "in {} saying: {}".format(channel, content),
+            "in {} saying: {}".format(channel, line_obj.message),
             "Time: {}. (GMT -3:00)".format(timestamp)
         ]
         

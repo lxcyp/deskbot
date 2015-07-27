@@ -1,61 +1,49 @@
 import time
-import irc, sys, var, ini
+import irc
+import sys
+import var
+import ini
+import parser
 from command_modules import *
-
-# Misc. attributes.
-split_line = ""
 
 ###########################################
 #     Interpreting received messages.     #
 ###########################################
 
-def read (msg, *args):
-    global split_line
-    
-    print(msg)
-    
-    # Save a split line.
-    if args:
-        split_line = args[0]
+def read (line):
+    print(line)
     
     # Check for server ping.
-    if msg.startswith("PING :"):
-        irc.pong(msg.split(' :')[1])
+    if line.startswith("PING :"):
+        irc.pong(line.split(" :")[1])
         return
     
-    # If the message received isn't a server ping, proceed.
-    user = msg.split('!')[0][1:]
+    # Parse line into a line object.
+    line_obj = parser.parse(line)
     
-    try:
-        event = msg.split(' ')[1]
-    except IndexError:
-        event = ''
+    if line_obj.event == "PRIVMSG":
+        privmsg(line_obj.user, line_obj.target, line_obj.message)
+
+    elif line_obj.event == "NOTICE":
+        notice(line_obj.user, line_obj.target, line_obj.message)
     
-    if event == "PRIVMSG":
-        channel = msg.split(' ')[2] if msg.split(' ')[2] != irc.botnick else user
-        content = msg.split(' :', 1)[1] if len(msg.split(' :')) > 1 else ''
-        privmsg(user, channel, content)
-    elif event == "NOTICE":
-        channel = msg.split(' ')[2] if msg.split(' ')[2] != irc.botnick else user
-        content = msg.split(' :', 1)[1] if len(msg.split(' :')) > 1 else ''
-        notice(user, channel, content)
-    elif event == "INVITE":
-        channel = msg.split(' :')[1]
-        invite(user, channel)
-    elif event == "NICK":
-        if user == irc.admin:
-            irc.admin = msg.split(' :')[1]
+    elif line_obj.event == "INVITE":
+        invite(line_obj.user, line_obj.channel)
+    
+    elif line_obj.event == "NICK":
+        if line_obj.user == irc.admin:
+            irc.admin = line_obj.new_nick
     
     # Finally, call the monitor functions.
     for function in monitor:
-        function(msg)
+        function(line_obj)
 
 ###########################################
 #            Treating events.             #
 ###########################################
 
 def privmsg (user, channel, content):
-    word = filter(bool, content.split(' '))
+    word = filter(bool, content.split(" "))
     
     # Ignored people get out.
     if user in var.ignored:
@@ -76,8 +64,8 @@ def notice (user, channel, content):
             irc.join(channel)
 
 def invite (user, channel):
-    irc.join(channel)
-    irc.msg(channel, "{} invited me here.".format(user))
+    irc.msg(user, "I'll let {} know you invited me to {}.".format(irc.admin, channel))
+    irc.msg(irc.admin, "Invite to {} from {}.".format(channel, user))
 
 def ctcp (user, request):
     if request in var.ctcp:
