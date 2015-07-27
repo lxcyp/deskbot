@@ -54,10 +54,10 @@ def ident (f):
 # Insert message monitor.
 def ins_monitor (line_obj):
     user = line_obj.user
-    channel = line_obj.channel if line_obj.channel != irc.botnick else line_obj.user
-    
+        
     # The user joins a channel.
     if line_obj.event == "JOIN":
+        channel = line_obj.channel
         
         # Stop if the channel is on the untracked list.
         if channel in var.data["not_track"]:
@@ -86,6 +86,7 @@ def ins_monitor (line_obj):
         
     # A channel message is received.
     elif line_obj.event == "PRIVMSG":
+        channel = line_obj.target if line_obj.target != irc.botnick else line_obj.user
         
         # Stop if the channel is on the untracked list.
         if channel in var.data["not_track"]:
