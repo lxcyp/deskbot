@@ -6,7 +6,7 @@ from modules import handler, feed
 from modules import settings
 
 os.system("cls" if os.name == "nt" else "clear")
-print "Starting deskbot."
+print("Starting deskbot.")
 var.start_point = time.time()   # Store time when the bot starts.
 
 parser = argparse.ArgumentParser()

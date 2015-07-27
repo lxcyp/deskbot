@@ -16,7 +16,7 @@ def connect ():
         irc.connect(irc.server, irc.port)
     except socket_error:
         # If the bot can't connect to the server, we get a socket error.
-        print "Couldn't connect to {}... (Retrying in 15 seconds.)".format(irc.server)
+        print("WARNING: Couldn't connect to {}... (Retrying in 15 seconds.)".format(irc.server))
         
         # Make irc.ircsock an object with recv and send methods.
         irc.ircsock = type("socket", (object,), {
@@ -41,12 +41,12 @@ def connect ():
             
     # Check one last time for nick errors.
     if tools.nick_check():
-        print "deskbot tried her best, but couldn't get in with any nicknames."
+        print("ERROR: deskbot tried her best, but couldn't get in with any nicknames.")
         raise SystemExit
     else:
-        print "Using nickname: {}".format(irc.botnick)
+        print("WARNING: Using nickname: {}".format(irc.botnick))
     
-    print "Joining channels: {}".format(" ".join(var.channels))
+    print("Joining channels: {}".format(" ".join(var.channels)))
     
     for channel in var.channels:
         irc.join(channel)
@@ -64,8 +64,8 @@ def s_out ():
     
     # Check if the connection has been interrupted.
     if len(line) == 0:
-        print "The bot has been disconnected from the server."
-        print "Attempting to reconnect now..."
+        print("ERROR: The bot has been disconnected from the server.")
+        print("Attempting to reconnect now...")
         connect()
     
     # Remove leftover '\n' from a not that split line.

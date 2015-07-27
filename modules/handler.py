@@ -12,7 +12,7 @@ split_line = ""
 def read (msg, *args):
     global split_line
     
-    print msg
+    print(msg)
     
     # Save a split line.
     if args:
@@ -127,7 +127,7 @@ def fill_commands ():
         # Disable if set to. Give the user some time to read it.
         if command in dsbl_commands:
             var.commands[command].disabled = dsbl_commands[command]
-            print "Disabling .{} in: {}".format(command, " ".join(dsbl_commands[command]))
+            print("WARNING: Disabling .{} in: {}".format(command, " ".join(dsbl_commands[command])))
         elif not hasattr(var.commands[command], "disabled"):
             var.commands[command].disabled = []
         
