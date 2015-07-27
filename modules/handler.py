@@ -56,7 +56,7 @@ def privmsg (user, channel, content):
 
 def notice (user, channel, content):
     # Should the bot fail to identify the first time.
-    if user == "NickServ" and "This nickname is registered and" in content:
+    if user == "NickServ" and "This nickname is registered" in content:
         irc.identify()
         
         # Some channels might have +R enabled.
