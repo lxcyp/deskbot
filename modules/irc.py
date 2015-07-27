@@ -40,7 +40,16 @@ def identify ():
     time.sleep(1)
 
 def msg (target, string):
-    ircsock.send("PRIVMSG {} :{}\r\n".format(target, string))
+    line = "PRIVMSG {} :{}".format(target, string)
+    
+    # Lines that make more than 1.2 messages are just mean.
+    if len(line) > (612 - 2*len("PRIVMSG {} :".format(target))):
+        ircsock.send("PRIVMSG {} :<text was too long>\r\n".format(target))
+    elif len(line) > 510:
+        ircsock.send(line[:511] + "\r\n")
+        msg(target, line[512:])
+    else:
+        ircsock.send(line + "\r\n")
 
 def notice (target, string):
     ircsock.send("NOTICE {} :{}\r\n".format(target, string))
