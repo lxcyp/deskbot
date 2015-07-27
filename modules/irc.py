@@ -8,6 +8,7 @@ botnick  = "deskbot"        # Default bot nick.
 password = ""               # Default NickServ password.
 admin    = ""               # Default admin nickname.
 port     = 6667             # Default server port.
+timeout  = 240              # Default ping timeout.
 
 def display_info ():
     print("Nickname:    {}".format(botnick))

@@ -20,14 +20,21 @@ parser.add_argument("-b", "--botnick", default="deskbot",
 parser.add_argument("-a", "--admin", help="Nickname of the admin(supposed to be you).")
 parser.add_argument("-P", "--password",
                     help="NickServ password, if the bot needs authentication.")
+parser.add_argument("-t", "--timeout",
+                    help="Ping timeout in seconds, default is 240 seconds.")
 args = parser.parse_args()
 
 # Grabbing arguments given.
 irc.server = args.server
 irc.password = args.password
-irc.admin = args.admin if args.admin else raw_input("Please choose an admin nickname: ")
 irc.botnick = args.botnick
 irc.port = args.port
+irc.admin = args.admin
+irc.timeout = args.timeout if args.timeout > 0 else 240
+
+# Require an admin nickname to go on.
+while not irc.admin:
+    irc.admin = raw_input("Please choose an admin nickname: ")
 
 # Creating ini folder for network, if it doesn't exist.
 if not os.path.isdir("ini"):

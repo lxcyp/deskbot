@@ -12,21 +12,9 @@ def ident (f):
     return check
 
 # Insert a message monitor.
-def ins_monitor (message):
-    user = message.split("!")[0][1:]
-    try:
-        event = message.split(' ')[1]
-    except IndexError:
-        event = ''
-    
-    if event in ["JOIN"]:
-        # Grab channel name.
-        try:
-            channel = message.split(" :")[1]
-        except IndexError:
-            channel = message.split(" JOIN ")[1]
-        
-        greet(user, channel)
+def ins_monitor (line_obj):
+    if line_obj.event == "JOIN":
+        greet(line_obj.user, line_obj.channel)
 
 # Insert command to set intros.
 def ins_command ():

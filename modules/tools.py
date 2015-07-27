@@ -93,7 +93,7 @@ def nick_check ():
         except IndexError:
             handler.read(msg)
     
-    irc.ircsock.settimeout(None)
+    irc.ircsock.settimeout(irc.timeout)
     return False
 
 ###########################################
