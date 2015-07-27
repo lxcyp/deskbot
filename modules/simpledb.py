@@ -1,13 +1,6 @@
 import ini, var, irc
 from tools import is_identified
 
-"""
-Stores strings on given key in given dictionary.
-Is done this way so there is absolutely no need to rewrite it ever again.
-
-Doesn't necessarily need a user to be a key.
-"""
-
 # Simple database command usage. Fills the command's entry in .help.
 command_usage = [
     "{} - Check your {n} entry.",
