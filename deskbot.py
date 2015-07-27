@@ -38,9 +38,8 @@ if not os.path.isdir("ini/{}".format(irc.server)):
 # Reading the channels, ignored, ctcp and settings files.
 var.channels = ini.fill_list("channels.ini")
 var.ignored  = ini.fill_list("ignored.ini")
-var.ctcp     = ini.fill_dict("ctcp.ini", "CTCP")
-var.ctcp     = { key:var.ctcp[key][0] for key in var.ctcp }
-var.settings = settings.init()
+var.ctcp     = settings.ctcp()
+var.settings = settings.settings()
 
 handler.fill_commands()
 feed.connect()

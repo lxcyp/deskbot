@@ -1,6 +1,8 @@
+import os.path
 import ini
 
-def init ():
+# Create settings dictionary.
+def settings ():
     se_dict = ini.fill_dict("settings.ini", "Settings")
     
     se_dict = {
@@ -11,27 +13,68 @@ def init ():
         for key in se_dict.keys()
     }
     
-    # Add default settings if necessary variables aren't present.
-    add_default(se_dict)
+    # Add default settings.
+    se_dict = add_default_se(se_dict)
     
     return se_dict
 
-def add_default (se_dict):
+# Create CTCP dictionary.
+def ctcp ():
+    ctcp_dict = ini.fill_dict("ctcp.ini", "CTCP")
     
-    if "ircop.prefix" not in se_dict:
-        se_dict["ircop.prefix"] = "!"
+    ctcp_dict = {
+        key : ctcp_dict[key][0] for key in ctcp_dict.keys()
+    }
     
-    if "owner.prefix" not in se_dict:
-        se_dict["owner.prefix"] = "~"
+    # Add default replies.
+    ctcp_dict = add_default_ctcp(ctcp_dict)
     
-    if "admin.prefix" not in se_dict:
-        se_dict["admin.prefix"] = "&"
+    return ctcp_dict
+
+# Default settings.
+def add_default_se (se_dict):
     
-    if "op.prefix" not in se_dict:
-        se_dict["op.prefix"] = "@"
+    # Check for default settings file.
+    if os.path.isfile("ini/default/settings.ini"):
+        default_dict = ini.fill_dict("ini/default/settings.ini", "Settings")
+        default_dict = {
+            key:
+                True if default_dict[key][0] == "true"
+                else False if default_dict[key][0] == "false"
+                else deafult_dict[key][0]
+            for key in default_dict.keys()
+        }
+    else:
+        print("WARNING: No default settings.ini found.")
+        default_dict = {
+            "ircop.prefix":"!", "owner.prefix":"~",
+            "admin.prefix":"&", "op.prefix":"@",
+            "halfop.prefix":"%", "voice.prefix":"+"
+        }
     
-    if "halfop.prefix" not in se_dict:
-        se_dict["halfop.prefix"] = "%"
+    # Add each if not set.
+    for option in default_dict.keys():
+        if option not in se_dict:
+            se_dict[option] = default_dict[option]
     
-    if "voice.prefix" not in se_dict:
-        se_dict["voice.prefix"] = "+"
+    return se_dict
+
+# Default CTCP replies.
+def add_default_ctcp (ctcp_dict):
+    
+    # Check for default CTCP replies file.
+    if os.path.isfile("ini/default/ctcp.ini"):
+        default_dict = ini.fill_dict("ini/default/ctcp.ini", "CTCP")
+        default_dict = {
+            key : default_dict[key][0] for key in default_dict.keys()
+        }
+    else:
+        print("WARNING: No default ctcp.ini found.")
+        default_dict = {}
+    
+    # Add each if not set.
+    for option in default_dict.keys():
+        if option not in ctcp_dict:
+            ctcp_dict[option] = default_dict[option]
+    
+    return ctcp_dict
