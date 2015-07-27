@@ -5,10 +5,10 @@ def init ():
     
     se_dict = {
         key:
-            True if var.settings[key][0] == "true"
-            else False if var.settings[key][0] == "false"
-            else var.settings[key][0]
-        for key in var.settings.keys()
+            True if se_dict[key][0] == "true"
+            else False if se_dict[key][0] == "false"
+            else se_dict[key][0]
+        for key in se_dict.keys()
     }
     
     # Add default settings if necessary variables aren't present.

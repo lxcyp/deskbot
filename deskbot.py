@@ -2,7 +2,7 @@ import os
 import time
 import argparse
 from modules import ini, irc, var
-from modules import feed, handler
+from modules import handler, feed
 from modules import settings
 
 os.system("cls" if os.name == "nt" else "clear")
