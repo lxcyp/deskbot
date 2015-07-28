@@ -1,4 +1,5 @@
 ini/*
 !ini/default/
+api-keys/**
 
 *.pyc
