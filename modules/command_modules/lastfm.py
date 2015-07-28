@@ -79,5 +79,5 @@ def display_track (user, channel):
     title = track.title
     artist = track.artist
 
-    line = "\x0f{} by {}\x0f".format(title, artist)
+    line = "\x0f{} by {}\x0f".format(title.encode("utf-8"), artist.name.encode("utf-8"))
     irc.msg(channel, "{} [{}]".format(line, user))
