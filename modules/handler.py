@@ -49,6 +49,10 @@ def privmsg (user, channel, content):
     if user in var.ignored:
         return
     
+    # Channel should be the user if it's a PM.
+    if channel == irc.botnick:
+        channel = user
+    
     if len(word) and word[0] in commands:
         commands[word[0]](user, channel, word)
     elif len(word) and word[0].startswith("\001"):
