@@ -42,7 +42,7 @@ def ins_command ():
 
 # Insert a username database.
 def ins_db ():
-    var.data["lastfm"] = ini.fill_dict("lastfm", "lastfm.ini")
+    var.data["lastfm"] = ini.fill_dict("lastfm.ini", "lastfm")
     var.data["lastfm"] = {
         user:var.data["lastfm"][user][0]
         for user in var.data["lastfm"]
