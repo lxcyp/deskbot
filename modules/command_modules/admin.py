@@ -475,8 +475,8 @@ def uptime (user, channel, word):
         up = up % 60
     
     irc.msg(channel, "Uptime: {}.".format(
-        ("{} days, ".format(days) if days else "") +
-        ("{} hours, ".format(hours) if hours else "") +
-        ("{} minutes, ".format(min) if min else "") +
-        "{} seconds".format(round(up, 2))
+        ("{} day(s), ".format(days) if days else "") +
+        ("{} hour(s), ".format(hours) if hours else "") +
+        ("{} minute(s), ".format(min) if min else "") +
+        "{} second(s)".format(round(up, 2))
     ))
