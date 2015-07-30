@@ -22,9 +22,12 @@ parser.add_argument("-P", "--password",
                     help="NickServ password, if the bot needs authentication.")
 parser.add_argument("-t", "--timeout",
                     help="Ping timeout in seconds, default is 240 seconds.")
+parser.add_argument("--log", action="store_true",
+                    help="Save lines in log/server-address.log.")
 args = parser.parse_args()
 
 # Grabbing arguments given.
+var.log = args.log
 irc.server = args.server
 irc.password = args.password
 irc.botnick = args.botnick

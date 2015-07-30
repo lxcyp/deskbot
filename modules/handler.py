@@ -13,6 +13,9 @@ from command_modules import *
 def read (line):
     print(line)
     
+    if var.log:
+        ini.add_to_list(line, "log/{}.log".format(irc.server), raw_path = True)
+    
     # Check for server ping.
     if line.startswith("PING :"):
         irc.pong(line.split(" :")[1])
