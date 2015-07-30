@@ -54,7 +54,7 @@ def privmsg (user, channel, content):
     word = filter(bool, content.split(" "))
     
     # Ignored people get out.
-    if user in var.ignored:
+    if user.lower() in [nick.lower() for nick in var.ignored]:
         return
     
     # Channel should be the user if it's a PM.
@@ -105,7 +105,7 @@ def numrep (code, message):
 def ident (cmd_obj):
     module = sys.modules[cmd_obj.method.__module__]
     def dsbl_check (user, channel, word):
-        if channel in cmd_obj.disabled:
+        if channel.lower() in [chan.lower() for chan in cmd_obj.disabled]:
             return
         elif hasattr(module, "ident"):
             return module.ident(cmd_obj.method)(user, channel, word)
