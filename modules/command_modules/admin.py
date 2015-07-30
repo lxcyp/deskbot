@@ -404,7 +404,7 @@ def ignore (user, channel, word):
             var.ignored.append(nick)
         
         if nick_list:
-            irc.msg(channel, "{}: I'll ignore {} from now on.".format(user, ", ".join(ignored)))
+            irc.msg(channel, "{}: I'll ignore {} from now on.".format(user, ", ".join(nick_list)))
         else:
             irc.msg(channel, "{}: No new nicks were ignored.".format(user))
 
