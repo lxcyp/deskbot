@@ -68,7 +68,7 @@ def notice (user, channel, content):
             irc.join(channel)
 
 def invite (user, channel):
-    irc.msg(user, "I'll let {} know you invited me to {}.".format(irc.admin, channel))
+    irc.notice(user, "I'll let {} know you invited me to {}.".format(irc.admin, channel))
     irc.msg(irc.admin, "Invite to {} from {}.".format(channel, user))
 
 def ctcp (user, request):
