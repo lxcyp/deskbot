@@ -36,6 +36,9 @@ def read (line):
     elif line_obj.event == "KICK":
         kick(line_obj.user, line_obj.channel, line_obj.target, line_obj.reason)
     
+    elif line_obj.event == "NUMREP":
+        numrep(line_obj.code, line_obj.message)
+    
     # Finally, call the monitor functions.
     for function in monitor:
         function(line_obj)
@@ -87,6 +90,9 @@ def kick (user, channel, target, reason):
         
         var.channels.remove(channel)
         ini.remove_from_list(channel, "channels.ini")
+
+def numrep (code, message):
+    return
 
 ###########################################
 #    Checking for ident functions and     #
