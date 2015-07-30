@@ -31,8 +31,7 @@ def read (line):
         invite(line_obj.user, line_obj.channel)
     
     elif line_obj.event == "NICK":
-        if line_obj.user == irc.admin:
-            irc.admin = line_obj.new_nick
+        nick(line_obj.user, line_obj.new_nick)
     
     # Finally, call the monitor functions.
     for function in monitor:
@@ -74,6 +73,11 @@ def invite (user, channel):
 def ctcp (user, request):
     if request in var.ctcp:
         irc.notice(user, "\001{} {}\001".format(request, var.ctcp[request]))
+
+def nick (user, new_nick):
+    # Update admin nickname.
+    if user == irc.admin:
+        irc.admin = new_nick
 
 ###########################################
 #    Checking for ident functions and     #
