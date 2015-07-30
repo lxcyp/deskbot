@@ -4,12 +4,14 @@ import var, irc
 # Reading from ini files.
 
 # Return dictionary of option:data.
-def fill_dict (filename, section):
+def fill_dict (filename, section, **kwargs):
     config = ConfigParser.RawConfigParser()
     config.optionxform = str
     config.read(
-        "ini/{}/{}".format(irc.server, filename) if not filename.startswith("ini/")
-        else filename
+        "ini/{}/{}".format(irc.server, filename) if not (
+            filename.startswith("ini/") or
+            ("raw_path" in kwargs and kwargs["raw_path"])
+        ) else filename
     )
     
     rd_dict = {}
@@ -21,10 +23,12 @@ def fill_dict (filename, section):
     return rd_dict
 
 # Return list of lines in a file without "\n" at the end.
-def fill_list (filename):
+def fill_list (filename, **kwargs):
     with open(
-        "ini/{}/{}".format(irc.server, filename) if not filename.startswith("ini/")
-        else filename
+        "ini/{}/{}".format(irc.server, filename) if not (
+            filename.startswith("ini/") or
+            ("raw_path" in kwargs and kwargs["raw_path"])
+        ) else filename
         , "a+"
     ) as list_file:
         rd_list = [line.strip() for line in list_file]
@@ -35,7 +39,10 @@ def fill_list (filename):
 # Set an option inside a section on a config(ini) file.
 def add_to_ini (section, option, data, path):
     option = option.replace('[', '~')
-    path = path if path.startswith("ini/") else "ini/{}/{}".format(irc.server, path)
+    path = path if not (
+                path.startswith("ini/") or
+                ("raw_path" in kwargs and kwargs["raw_path"])
+           ) else "ini/{}/{}".format(irc.server, path)
     
     config = ConfigParser.RawConfigParser()
     config.optionxform = str
@@ -55,9 +62,12 @@ def add_to_ini (section, option, data, path):
         config.write(iniFile)
 
 # Remove option from a config(ini) file.
-def remove_from_ini (section, option, path):
+def remove_from_ini (section, option, path, **kwargs):
     option = option.replace('[', '~')
-    path = path if path.startswith("ini/") else "ini/{}/{}".format(irc.server, path)
+    path = path if not (
+                path.startswith("ini/") or
+                ("raw_path" in kwargs and kwargs["raw_path"])
+           ) else "ini/{}/{}".format(irc.server, path)
     
     config = ConfigParser.RawConfigParser()
     config.optionxform = str
@@ -72,10 +82,12 @@ def remove_from_ini (section, option, path):
         config.write(iniFile)
 
 # Add line to a list file.
-def add_to_list (line, filename):
+def add_to_list (line, filename, **kwargs):
     with open(
-        "ini/{}/{}".format(irc.server, filename) if not filename.startswith("ini/")
-        else filename
+        "ini/{}/{}".format(irc.server, filename) if not (
+            filename.startswith("ini/") or
+            ("raw_path" in kwargs and kwargs["raw_path"])
+        ) else filename
         , "a+"
     ) as list_file:
         # Write line to file if it isn't already there.
@@ -83,10 +95,12 @@ def add_to_list (line, filename):
             list_file.write(line + "\n")
 
 # Remove line from a list file.
-def remove_from_list (line, filename):
+def remove_from_list (line, filename, **kwargs):
     with open(
-        "ini/{}/{}".format(irc.server, filename) if not filename.startswith("ini/")
-        else filename
+        "ini/{}/{}".format(irc.server, filename) if not (
+            filename.startswith("ini/") or
+            ("raw_path" in kwargs and kwargs["raw_path"])
+        ) else filename
         , "r+"
     ) as list_file:
         # List every line in the file.
