@@ -37,7 +37,7 @@ def fill_list (filename, **kwargs):
 # Making changes to ini files.
 
 # Set an option inside a section on a config(ini) file.
-def add_to_ini (section, option, data, path):
+def add_to_ini (section, option, data, path, **kwargs):
     option = option.replace('[', '~')
     path = path if not (
                 path.startswith("ini/") or
