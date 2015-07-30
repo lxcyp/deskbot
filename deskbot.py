@@ -42,10 +42,13 @@ while not irc.admin:
 # Creating ini folder for network, if it doesn't exist.
 if not os.path.isdir("ini"):
     os.mkdir("ini")
-    print "Creating ini folder."
+    print("Created ini folder.")
+if not os.path.isdir("log"):
+    os.mkdir("log")
+    print("Created log folder.")
 if not os.path.isdir("ini/{}".format(irc.server)):
     os.mkdir("ini/{}".format(irc.server))
-    print "Creating ini folder for {}.".format(irc.server)
+    print("Created ini folder for {}.".format(irc.server))
 
 # Reading the channels, ignored, ctcp and settings files.
 var.channels = ini.fill_list("channels.ini")
