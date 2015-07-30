@@ -33,6 +33,9 @@ def read (line):
     elif line_obj.event == "NICK":
         nick(line_obj.user, line_obj.new_nick)
     
+    elif line_obj.event == "KICK":
+        kick(line_obj.user, line_obj.channel, line_obj.target, line_obj.reason)
+    
     # Finally, call the monitor functions.
     for function in monitor:
         function(line_obj)
@@ -58,11 +61,9 @@ def privmsg (user, channel, content):
         ctcp(user, word[0].strip("\001"))
 
 def notice (user, channel, content):
-    # Should the bot fail to identify the first time.
     if user == "NickServ" and "This nickname is registered" in content:
         irc.identify()
         
-        # Some channels might have +R enabled.
         for channel in var.channels:
             irc.join(channel)
 
@@ -75,9 +76,17 @@ def ctcp (user, request):
         irc.notice(user, "\001{} {}\001".format(request, var.ctcp[request]))
 
 def nick (user, new_nick):
-    # Update admin nickname.
     if user == irc.admin:
         irc.admin = new_nick
+
+def kick (user, channel, target, reason):
+    if target == irc.botnick:
+        irc.msg(irc.admin, "{} was kicked from {} by {}.".format(target, channel, user))
+        irc.msg(irc.admin, "Reason: {}".format(reason) if reason
+                else "No reason was given.")
+        
+        var.channels.remove(channel)
+        ini.remove_from_list(channel, "channels.ini")
 
 ###########################################
 #    Checking for ident functions and     #
