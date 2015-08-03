@@ -41,8 +41,10 @@ def identify ():
     print("\nTrying to identify with NickServ.\n")
     time.sleep(1)
 
-def msg (target, string):
-    string = hlfilter.filter(string)
+def msg (target, string, **kwargs):
+    if not kwargs or ("raw" not in kwargs or not kwargs["raw"]):
+        string = hlfilter.filter(string)
+    
     line = "PRIVMSG {} :{}".format(target, string)
     
     # Lines that make more than 1.2 messages are just mean.

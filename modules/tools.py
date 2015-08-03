@@ -13,7 +13,7 @@ import handler
 ###########################################
 
 def set_auth_method ():
-    irc.msg("NickServ", "STATUS {}".format(irc.botnick))
+    irc.msg("NickServ", "STATUS {}".format(irc.botnick), raw = True)
     response = ""
     
     while not response:
@@ -40,7 +40,7 @@ def is_identified (user):
         set_auth_method()
     
     # Send set auth command.
-    irc.msg("NickServ", "{} {}".format(var.settings["ident.method"], user))
+    irc.msg("NickServ", "{} {}".format(var.settings["ident.method"], user), raw = True)
     response = ""
     
     while not response:
@@ -142,9 +142,9 @@ def ctcp_req (user, request, *param):
     
     # Send the request.
     if param:
-        irc.msg(user, "\001{} {}\001".format(request, param[0]))
+        irc.msg(user, "\001{} {}\001".format(request, param[0]), raw = True)
     else:
-        irc.msg(user, "\001{}\001".format(request))
+        irc.msg(user, "\001{}\001".format(request), raw = True)
     
     # Only listen for 20 seconds.
     while (not reply) and end - start < 20:
