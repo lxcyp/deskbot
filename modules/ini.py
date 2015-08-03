@@ -25,10 +25,10 @@ def fill_dict (filename, section, **kwargs):
 # Return list of lines in a file without "\n" at the end.
 def fill_list (filename, **kwargs):
     with open(
-        "ini/{}/{}".format(irc.server, filename) if not (
+        ( "ini/{}/{}".format(irc.server, filename) if not (
             filename.startswith("ini/") or
             ("raw_path" in kwargs and kwargs["raw_path"])
-        ) else filename
+        ) else filename )
         , "a+"
     ) as list_file:
         rd_list = [line.strip() for line in list_file]
@@ -84,10 +84,10 @@ def remove_from_ini (section, option, path, **kwargs):
 # Add line to a list file.
 def add_to_list (line, filename, **kwargs):
     with open(
-        "ini/{}/{}".format(irc.server, filename) if not (
+        ( "ini/{}/{}".format(irc.server, filename) if not (
             filename.startswith("ini/") or
             ("raw_path" in kwargs and kwargs["raw_path"])
-        ) else filename
+        ) else filename )
         , "a+"
     ) as list_file:
         # Write line to file if it isn't already there.
@@ -97,10 +97,10 @@ def add_to_list (line, filename, **kwargs):
 # Remove line from a list file.
 def remove_from_list (line, filename, **kwargs):
     with open(
-        "ini/{}/{}".format(irc.server, filename) if not (
+        ( "ini/{}/{}".format(irc.server, filename) if not (
             filename.startswith("ini/") or
             ("raw_path" in kwargs and kwargs["raw_path"])
-        ) else filename
+        ) else filename )
         , "r+"
     ) as list_file:
         # List every line in the file.
