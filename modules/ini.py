@@ -37,8 +37,8 @@ def fill_list (filename, raw_path = False):
 # Set an option inside a section on a config(ini) file.
 def add_to_ini (section, option, data, path, raw_path = False):
     option = option.replace('[', '~')
-    path = path if (path.startswith("ini/") or raw_path)
-            else "ini/{}/{}".format(irc.server, path)
+    path = path if (path.startswith("ini/") or raw_path
+                ) else "ini/{}/{}".format(irc.server, path)
     
     config = ConfigParser.RawConfigParser()
     config.optionxform = str
