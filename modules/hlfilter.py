@@ -1,8 +1,9 @@
 import re
 import var
 
+re_m = re.compile("[a-zA-Z\[\]\\`_\^\{\|\}][a-zA-Z0-9\[\]\\`_\^\{\|\}]+")
+
 def filter (string):
-    re_m = re.compile("[a-zA-Z\[\]\\`_\^\{\|\}][a-zA-Z0-9\[\]\\`_\^\{\|\}]+")
     
     # Check for nicknames in the string.
     matches = re_m.findall(string)
