@@ -4,13 +4,12 @@ import var, irc
 # Reading from ini files.
 
 # Return dictionary of option:data.
-def fill_dict (filename, section, **kwargs):
+def fill_dict (filename, section, raw_path = False):
     config = ConfigParser.RawConfigParser()
     config.optionxform = str
     config.read(
         "ini/{}/{}".format(irc.server, filename) if not (
-            filename.startswith("ini/") or
-            ("raw_path" in kwargs and kwargs["raw_path"])
+            filename.startswith("ini/") or raw_path
         ) else filename
     )
     
@@ -23,11 +22,10 @@ def fill_dict (filename, section, **kwargs):
     return rd_dict
 
 # Return list of lines in a file without "\n" at the end.
-def fill_list (filename, **kwargs):
+def fill_list (filename, raw_path = False):
     with open(
         ( "ini/{}/{}".format(irc.server, filename) if not (
-            filename.startswith("ini/") or
-            ("raw_path" in kwargs and kwargs["raw_path"])
+            filename.startswith("ini/") or raw_path
         ) else filename )
         , "a+"
     ) as list_file:
@@ -37,12 +35,10 @@ def fill_list (filename, **kwargs):
 # Making changes to ini files.
 
 # Set an option inside a section on a config(ini) file.
-def add_to_ini (section, option, data, path, **kwargs):
+def add_to_ini (section, option, data, path, raw_path = False):
     option = option.replace('[', '~')
-    path = path if not (
-                path.startswith("ini/") or
-                ("raw_path" in kwargs and kwargs["raw_path"])
-           ) else "ini/{}/{}".format(irc.server, path)
+    path = path if (path.startswith("ini/") or raw_path)
+            else "ini/{}/{}".format(irc.server, path)
     
     config = ConfigParser.RawConfigParser()
     config.optionxform = str
@@ -58,15 +54,13 @@ def add_to_ini (section, option, data, path, **kwargs):
         remove_from_ini(section, option, path)
         return
     
-    with open(path, 'wb') as iniFile:
-        config.write(iniFile)
+    with open(path, 'wb') as ini_file:
+        config.write(ini_file)
 
 # Remove option from a config(ini) file.
-def remove_from_ini (section, option, path, **kwargs):
+def remove_from_ini (section, option, path, raw_path = False):
     option = option.replace('[', '~')
-    path = path if not (
-                path.startswith("ini/") or
-                ("raw_path" in kwargs and kwargs["raw_path"])
+    path = path if ( path.startswith("ini/") or raw_path
            ) else "ini/{}/{}".format(irc.server, path)
     
     config = ConfigParser.RawConfigParser()
@@ -78,31 +72,29 @@ def remove_from_ini (section, option, path, **kwargs):
     except:
         print "Not in .ini file: [{}] {}".format(section, option)
     
-    with open(path, 'wb') as iniFile:
-        config.write(iniFile)
+    with open(path, "wb") as ini_file:
+        config.write(ini_file)
 
 # Add line to a list file.
-def add_to_list (line, filename, **kwargs):
-    with open(
-        ( "ini/{}/{}".format(irc.server, filename) if not (
-            filename.startswith("ini/") or
-            ("raw_path" in kwargs and kwargs["raw_path"])
-        ) else filename )
-        , "a+"
-    ) as list_file:
+def add_to_list (line, filename, raw_path = False):
+    if raw_path or filename.startswith("ini/"):
+        filepath = filename
+    else:
+        filepath = "ini/{}/{}".format(irc.server, filename)
+    
+    with open(filepath, "a+") as list_file:
         # Write line to file if it isn't already there.
         if line + "\n" not in list_file.readlines():
             list_file.write(line + "\n")
 
 # Remove line from a list file.
-def remove_from_list (line, filename, **kwargs):
-    with open(
-        ( "ini/{}/{}".format(irc.server, filename) if not (
-            filename.startswith("ini/") or
-            ("raw_path" in kwargs and kwargs["raw_path"])
-        ) else filename )
-        , "r+"
-    ) as list_file:
+def remove_from_list (line, filename, raw_path = False):
+    if raw_path or filename.startswith("ini/"):
+        filepath = filename
+    else:
+        filepath = "ini/{}/{}".format(irc.server, filename)
+    
+    with open(filepath, "r+") as list_file:
         # List every line in the file.
         lines = list_file.readlines()
         # Go to the beginning of file.
@@ -110,7 +102,7 @@ def remove_from_list (line, filename, **kwargs):
         
         # Write everything on the file except line.
         for curr_line in lines:
-            if curr_line != line + "\n":
+            if curr_line != (line + "\n"):
                 list_file.write(curr_line)
         
         list_file.truncate()
