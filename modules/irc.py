@@ -1,5 +1,6 @@
 import socket
 import time
+import hlfilter
 
 ircsock = None
 
@@ -41,6 +42,7 @@ def identify ():
     time.sleep(1)
 
 def msg (target, string):
+    string = hlfilter.filter(string)
     line = "PRIVMSG {} :{}".format(target, string)
     
     # Lines that make more than 1.2 messages are just mean.
