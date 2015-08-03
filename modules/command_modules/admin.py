@@ -228,7 +228,8 @@ def nick (user, channel, word):
         irc.msg(channel, "{}: You gotta tell me what nick to change to.".format(user))
     else:
         # Check if the nickname is valid.
-        if not re.match("[a-zA-Z\[\]\\`_\^\{\|\}][a-zA-Z0-9\[\]\\`_\^\{\|\}]", word[1]):
+        match = re.match("[a-zA-Z\[\]\\`_\^\{\|\}][a-zA-Z0-9\[\]\\`_\^\{\|\}]+", word[1])
+        if not match or (hasattr(match, "group") and match.group() != word[1]):
             irc.msg(channel, "{}: Invalid nickname.".format(user))
         else:
             irc.nick(word[1])
