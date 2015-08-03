@@ -1,3 +1,4 @@
+import re
 import var
 
 def filter (string):
