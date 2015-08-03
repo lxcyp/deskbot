@@ -9,7 +9,7 @@ def ident (f):
         else:
             irc.msg(channel, "{}: Identify with NickServ first.".format(user))
     
-    return admin
+    return command
 
 # Register commands on the var module.
 def ins_command ():
