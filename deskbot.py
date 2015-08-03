@@ -24,10 +24,13 @@ parser.add_argument("-t", "--timeout",
                     help="Ping timeout in seconds, default is 240 seconds.")
 parser.add_argument("--log", action="store_true",
                     help="Save lines in log/server-address.log.")
+parser.add_argument("--log-file",
+                    help="Set a file on which the bot will save logs.")
 args = parser.parse_args()
 
 # Grabbing arguments given.
 var.log = args.log
+var.logfile = args.log_file
 irc.server = args.server
 irc.password = args.password
 irc.botnick = args.botnick

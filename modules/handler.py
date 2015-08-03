@@ -14,7 +14,8 @@ def read (line):
     print(line)
     
     if var.log:
-        ini.add_to_list(line, "log/{}.log".format(irc.server), raw_path = True)
+        ini.add_to_list(line, "log/{}.log".format(irc.server) if not var.logfile
+                        else "log/{}".format(var.logfile) , raw_path = True)
     
     # Check for server ping.
     if line.startswith("PING :"):
