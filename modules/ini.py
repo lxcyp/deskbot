@@ -20,7 +20,7 @@ def fill_dict (filename, section, raw_path = False):
     
     if config.has_section(section):
         for option in config.options(section):
-            rd_dict[option.replace('~', '[')] = config.get(section, option).split('\n')
+            rd_dict[option.replace("~", "[")] = config.get(section, option).split("\n")
     
     return rd_dict
 
