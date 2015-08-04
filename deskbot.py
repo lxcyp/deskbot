@@ -22,9 +22,15 @@ parser.add_argument("-P", "--password",
                     help="NickServ password, if the bot needs authentication.")
 parser.add_argument("-t", "--timeout",
                     help="Ping timeout in seconds, default is 240 seconds.")
+parser.add_argument("--log", action="store_true",
+                    help="Save lines in log/server-address.log.")
+parser.add_argument("--log-file",
+                    help="Set a file on which the bot will save logs.")
 args = parser.parse_args()
 
 # Grabbing arguments given.
+var.log = args.log
+var.logfile = args.log_file
 irc.server = args.server
 irc.password = args.password
 irc.botnick = args.botnick
@@ -39,10 +45,13 @@ while not irc.admin:
 # Creating ini folder for network, if it doesn't exist.
 if not os.path.isdir("ini"):
     os.mkdir("ini")
-    print "Creating ini folder."
+    print("Created ini folder.")
+if not os.path.isdir("log"):
+    os.mkdir("log")
+    print("Created log folder.")
 if not os.path.isdir("ini/{}".format(irc.server)):
     os.mkdir("ini/{}".format(irc.server))
-    print "Creating ini folder for {}.".format(irc.server)
+    print("Created ini folder for {}.".format(irc.server))
 
 # Reading the channels, ignored, ctcp and settings files.
 var.channels = ini.fill_list("channels.ini")

@@ -228,7 +228,8 @@ def nick (user, channel, word):
         irc.msg(channel, "{}: You gotta tell me what nick to change to.".format(user))
     else:
         # Check if the nickname is valid.
-        if not re.match("[a-zA-Z\[\]\\`_\^\{\|\}][a-zA-Z0-9\[\]\\`_\^\{\|\}]", word[1]):
+        match = re.match("[a-zA-Z\[\]\\`_\^\{\|\}][a-zA-Z0-9\[\]\\`_\^\{\|\}]+", word[1])
+        if not match or (hasattr(match, "group") and match.group() != word[1]):
             irc.msg(channel, "{}: Invalid nickname.".format(user))
         else:
             irc.nick(word[1])
@@ -404,7 +405,7 @@ def ignore (user, channel, word):
             var.ignored.append(nick)
         
         if nick_list:
-            irc.msg(channel, "{}: I'll ignore {} from now on.".format(user, ", ".join(ignored)))
+            irc.msg(channel, "{}: I'll ignore {} from now on.".format(user, ", ".join(nick_list)))
         else:
             irc.msg(channel, "{}: No new nicks were ignored.".format(user))
 
@@ -475,8 +476,8 @@ def uptime (user, channel, word):
         up = up % 60
     
     irc.msg(channel, "Uptime: {}.".format(
-        ("{} days, ".format(days) if days else "") +
-        ("{} hours, ".format(hours) if hours else "") +
-        ("{} minutes, ".format(min) if min else "") +
-        "{} seconds".format(round(up, 2))
+        ("{} day(s), ".format(days) if days else "") +
+        ("{} hour(s), ".format(hours) if hours else "") +
+        ("{} minute(s), ".format(min) if min else "") +
+        "{} second(s)".format(round(up, 2))
     ))

@@ -64,6 +64,7 @@ def parse (message):
     
     elif event.isdigit():
         s_line.code = int(event)
+        s_line.message = message.split(event)[1]
         s_line.event = "NUMREP"
     
     return s_line

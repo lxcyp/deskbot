@@ -35,6 +35,7 @@ def connect ():
     irc.display_info()
     irc.init()
     irc.ircsock.settimeout(irc.timeout)
+    initial_nick = irc.botnick
     
     # In case the nickname throws errors.
     while tools.nick_check() and len(irc.botnick) < 20:
@@ -46,7 +47,7 @@ def connect ():
     if tools.nick_check():
         print("ERROR: deskbot tried her best, but couldn't get in with any nicknames.")
         raise SystemExit
-    else:
+    elif irc.botnick != initial_nick:
         print("WARNING: Using nickname: {}".format(irc.botnick))
     
     print("Joining channels: {}".format(" ".join(var.channels)))

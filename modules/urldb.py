@@ -167,7 +167,8 @@ def add_function (url_dict, dict_name, filename, sect_name, *args):
             else:
                 break
         
-        ini.add_to_ini(sect_name, user, '\n'.join(url_dict[user]), filename)
+        ini.add_to_ini(section = sect_name, optione = user, 
+                        data = '\n'.join(url_dict[user]), filename = filename)
         irc.msg(channel, "{}: {} added.".format(user, sect_name))
     
     return add_url
@@ -188,7 +189,7 @@ def delete_function (url_dict, dict_name, filename, sect_name):
         # Wildcard removes everything saved for that user from the database.
         if word[2] == "*" and user in url_dict:
             del url_dict[user]
-            ini.remove_from_ini(sect_name, user, filename)
+            ini.remove_from_ini(section = sect_name, option = user, filename = filename)
             irc.msg(channel, "{}: All of your {} were removed successfully.".format(user, dict_name))
             return
         
@@ -215,11 +216,12 @@ def delete_function (url_dict, dict_name, filename, sect_name):
         # Delete entry in database for an empty list and remove user from ini file.
         if not url_dict[user]:
             del url_dict[user]
-            ini.remove_from_ini(sect_name, user, filename)
+            ini.remove_from_ini(section = sect_name, option = user, filename = filename)
             irc.msg(channel, "{}: All of your {} were removed successfully.".format(user, dict_name))
             return
         
-        ini.add_to_ini(sect_name, user, '\n'.join(url_dict[user]), filename)
+        ini.add_to_ini(section = sect_name, option = user, 
+                        data = '\n'.join(url_dict[user]), filename = filename)
         irc.msg(channel, "{}: {} deleted.".format(user, sect_name))
     
     return delete_url
@@ -266,7 +268,8 @@ def replace_function (url_dict, dict_name, filename, sect_name, *args):
         # Try to replace URL using received number.
         try:
             url_dict[user][number] = trim(word[3])
-            ini.add_to_ini(sect_name, user, '\n'.join(url_dict[user]), filename)
+            ini.add_to_ini(section = sect_name, option = user, 
+                            data = '\n'.join(url_dict[user]), filename = filename)
             irc.msg(channel, "{}: {} replaced.".format(user, sect_name.rstrip("s")))
         
         # It might not work, if the list isn't long enough.

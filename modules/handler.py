@@ -13,6 +13,10 @@ from command_modules import *
 def read (line):
     print(line)
     
+    if var.log:
+        ini.add_to_list(line, "log/{}.log".format(irc.server) if not var.logfile
+                        else "log/{}".format(var.logfile) , raw_path = True)
+    
     # Check for server ping.
     if line.startswith("PING :"):
         irc.pong(line.split(" :")[1])
@@ -31,8 +35,13 @@ def read (line):
         invite(line_obj.user, line_obj.channel)
     
     elif line_obj.event == "NICK":
-        if line_obj.user == irc.admin:
-            irc.admin = line_obj.new_nick
+        nick(line_obj.user, line_obj.new_nick)
+    
+    elif line_obj.event == "KICK":
+        kick(line_obj.user, line_obj.channel, line_obj.target, line_obj.reason)
+    
+    elif line_obj.event == "NUMREP":
+        numrep(line_obj.code, line_obj.message)
     
     # Finally, call the monitor functions.
     for function in monitor:
@@ -46,8 +55,12 @@ def privmsg (user, channel, content):
     word = filter(bool, content.split(" "))
     
     # Ignored people get out.
-    if user in var.ignored:
+    if user.lower() in [nick.lower() for nick in var.ignored]:
         return
+    
+    # Channel should be the user if it's a PM.
+    if channel == irc.botnick:
+        channel = user
     
     if len(word) and word[0] in commands:
         commands[word[0]](user, channel, word)
@@ -55,21 +68,35 @@ def privmsg (user, channel, content):
         ctcp(user, word[0].strip("\001"))
 
 def notice (user, channel, content):
-    # Should the bot fail to identify the first time.
     if user == "NickServ" and "This nickname is registered" in content:
         irc.identify()
         
-        # Some channels might have +R enabled.
         for channel in var.channels:
             irc.join(channel)
 
 def invite (user, channel):
-    irc.msg(user, "I'll let {} know you invited me to {}.".format(irc.admin, channel))
+    irc.notice(user, "I'll let {} know you invited me to {}.".format(irc.admin, channel))
     irc.msg(irc.admin, "Invite to {} from {}.".format(channel, user))
 
 def ctcp (user, request):
     if request in var.ctcp:
         irc.notice(user, "\001{} {}\001".format(request, var.ctcp[request]))
+
+def nick (user, new_nick):
+    if user == irc.admin:
+        irc.admin = new_nick
+
+def kick (user, channel, target, reason):
+    if target == irc.botnick:
+        irc.msg(irc.admin, "{} was kicked from {} by {}.".format(target, channel, user))
+        irc.msg(irc.admin, "Reason: {}".format(reason) if reason
+                else "No reason was given.")
+        
+        var.channels.remove(channel)
+        ini.remove_from_list(channel, "channels.ini")
+
+def numrep (code, message):
+    return
 
 ###########################################
 #    Checking for ident functions and     #
@@ -79,7 +106,7 @@ def ctcp (user, request):
 def ident (cmd_obj):
     module = sys.modules[cmd_obj.method.__module__]
     def dsbl_check (user, channel, word):
-        if channel in cmd_obj.disabled:
+        if channel.lower() in [chan.lower() for chan in cmd_obj.disabled]:
             return
         elif hasattr(module, "ident"):
             return module.ident(cmd_obj.method)(user, channel, word)
