@@ -14,8 +14,12 @@ def read (line):
     print(line)
     
     if var.log:
-        ini.add_to_list(line, "log/{}.log".format(irc.server) if not var.logfile
-                        else "log/{}".format(var.logfile) , raw_path = True)
+        if not var.logfile:
+            filepath = "log/{}.log".format(irc.server)
+        else:
+            filepath = "log/{}".format(var.logfile)
+        
+        ini.add_to_list(line, filepath, raw_path = True)
     
     # Check for server ping.
     if line.startswith("PING :"):
@@ -63,7 +67,14 @@ def privmsg (user, channel, content):
         channel = user
     
     if len(word) and word[0] in commands:
-        commands[word[0]](user, channel, word)
+        if var.debug:
+            try:
+                commands[word[0]](user, channel, word)
+            except Exception as err:
+                irc.notice(irc.admin, "{} - {}".format(word[0], err))
+        else:
+            commands[word[0]](user, channel, word)
+    
     elif len(word) and word[0].startswith("\001"):
         ctcp(user, word[0].strip("\001"))
 
