@@ -28,12 +28,15 @@ parser.add_argument("--log-file",
                     help="Set a file on which the bot will save logs.")
 parser.add_argument("--debug", action="store_true",
                     help="Accept exceptions on non-essential modules. (commands)")
+parser.add_argument("--no-auth", action="store_true",
+                    help="Make it so NickServ auth isn't ever required. (RISKY)")
 args = parser.parse_args()
 
 # Grabbing arguments given.
 var.log       = args.log
 var.logfile   = args.log_file
 var.debug     = args.debug
+var.no_auth   = args.no_auth
 irc.server    = args.server
 irc.password  = args.password if args.password else ""
 irc.botnick   = args.botnick

@@ -35,6 +35,11 @@ def set_auth_method ():
 ###########################################
 
 def is_identified (user):
+    
+    # Check if --no-auth flag was used.
+    if var.no_auth:
+        return True
+    
     # Determine auth command with services.
     if "ident.method" not in var.settings:
         set_auth_method()
