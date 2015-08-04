@@ -14,11 +14,13 @@ oi3nosAPIsecretHeRe34sdad
 
 To start the bot:
 ```
-./deskbot.py [-P password] [-b botnick] [-a admin_nick] [-p port] [-t timeout] server
+./deskbot.py [-P password] [-b botnick] [-a admin_nick] [-p port] [-t timeout] [--log] [--log-file filepath] server
 
 Alternatively:
-python deskbot.py [-P password] [-b botnick] [-a admin_nick] [-p port] [-t timeout] server
+python deskbot.py [-P password] [-b botnick] [-a admin_nick] [-p port] [-t timeout] [--log] [--log-file filepath] server
 ```
+
+Log files will go into the `log/` directory.
 
 I'm using argparse for the flags. Check `python deskbot.py -h` to learn how to use them.
 
