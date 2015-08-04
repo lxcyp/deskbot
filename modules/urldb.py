@@ -167,7 +167,7 @@ def add_function (url_dict, dict_name, filename, sect_name, *args):
             else:
                 break
         
-        ini.add_to_ini(section = sect_name, optione = user, 
+        ini.add_to_ini(section = sect_name, option = user, 
                         data = '\n'.join(url_dict[user]), filename = filename)
         irc.msg(channel, "{}: {} added.".format(user, sect_name))
     
