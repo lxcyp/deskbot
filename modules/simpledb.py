@@ -58,7 +58,7 @@ def mod_function (str_dict, dict_name, filename, section):
                 user = nick
         
         str_dict[user] = data
-        ini.add_to_ini(section, user, data, filename)
+        ini.add_to_ini(section = section, option = user, data = data, filename = filename)
         irc.msg(channel, "{}: Your {} was added successfully.".format(user, dict_name))
     
     return mod_entry
@@ -77,7 +77,7 @@ def rm_function (str_dict, dict_name, filename, section):
             irc.msg(channel, "{}: You have no {} saved.".format(user, dict_name))
         else:
             del str_dict[user]
-            ini.remove_from_ini(section, user, filename)
+            ini.remove_from_ini(section = section, option = user, filename = filename)
             irc.msg(channel, "{}: Your {} was removed successfully.".format(user, dict_name))
     
     return rm_entry
