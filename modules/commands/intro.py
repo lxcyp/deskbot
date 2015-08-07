@@ -22,11 +22,7 @@ def ins_command ():
     var.commands["intro"].method = read
     var.commands["intro"].tags = ["databases", "simpledb"]
     var.commands["intro"].aliases = [".intro", ".introduction"]
-    var.commands["intro"].usage = [
-        "{} - See your greet message.",
-        "{} -set intro - Set your greet message.",
-        "{} -rm - Remove your greet message."
-    ]
+    var.commands["intro"].usage = [line.format("{}", n="intro") for line in simpledb.command_usage]
 
 # This command uses a database.
 def ins_db ():
