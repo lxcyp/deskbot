@@ -4,7 +4,7 @@ import sys
 import var
 import ini
 import parser
-from command_modules import *
+from commands import *
 
 ###########################################
 #     Interpreting received messages.     #
