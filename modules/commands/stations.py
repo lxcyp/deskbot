@@ -31,11 +31,11 @@ ident = urldb.ident
 def read (user, channel, word):    
     if len(word) < 3:
         list_urls(user, channel, word)
-    elif word[1] in ["-a", "-add", "--add"]:
+    elif word[1] in urldb.add_strings:
         add_url(user, channel, word)
-    elif word[1] in ["-rm", "-remove", "--remove"]:
+    elif word[1] in urldb.del_strings:
         delete_url(user, channel, word)
-    elif word[1] in ["-re", "-replace", "--replace"]:
+    elif word[1] in urldb.rep_strings:
         replace_url(user, channel, word)
     else:
         list_urls(user, channel, word)

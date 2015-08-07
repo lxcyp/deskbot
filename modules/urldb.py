@@ -4,6 +4,20 @@ import irc
 from tools import is_identified, is_number
 from tools import trim, nsfw_check
 
+# Action strings lists.
+add_strings = [
+    "-a", "-add", "--add",
+    "-s", "-set", "--set"
+]
+del_strings = [
+    "-rm", "-remove", "--remove",
+    "-del", "-delete", "--delete"
+]
+rep_strings = [
+    "-re", "-replace", "--replace",
+    "-rp"
+]
+
 # URL database command usage. Gets passed to command module
 # to fill the command dictionary with their respective usage.
 command_usage = [
