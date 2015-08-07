@@ -29,9 +29,9 @@ ident = simpledb.ident
 
 # Command method.
 def read (user, channel, word):
-    if len(word) > 2 and word[1] in ["-set", "-s"]:
+    if len(word) > 2 and word[1] in simpledb.mod_strings:
         mod_entry(user, channel, word)
-    elif len(word) > 1 and word[1] in ["-rm", "-remove"]:
+    elif len(word) > 1 and word[1] in simpledb.del_strings:
         rm_entry(user, channel, word)
     else:
         access_db(user, channel, word)

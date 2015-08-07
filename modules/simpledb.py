@@ -1,6 +1,10 @@
 import ini, var, irc
 from tools import is_identified
 
+# Strings used for specific actions.
+mod_strings = ["-s", "-set", "--set"]
+del_strings = ["-rm", "-remove", "--remove", "-del", "-delete", "--delete"]
+
 # Simple database command usage. Fills the command's entry in .help.
 command_usage = [
     "{} - Check your {n} entry.",
@@ -12,6 +16,10 @@ command_usage = [
     "{} -rm - Remove your {n} entry.",
     "You can also use \x034-remove\x0f."
 ]
+
+
+# Methods
+
 
 # This kind of command requires NickServ authentication.
 def ident (f):
