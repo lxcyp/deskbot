@@ -8,10 +8,18 @@ def ins_db ():
     
     var.data["desktops"] = ini.fill_dict("desktops.ini", "Desktops")
     
-    list_urls = urldb.list_function(var.data["desktops"], "desktops")
-    add_url = urldb.add_function(var.data["desktops"], "desktops", "desktops.ini", "Desktops")
-    delete_url = urldb.delete_function(var.data["desktops"], "desktops", "desktops.ini", "Desktops")
-    replace_url = urldb.replace_function(var.data["desktops"], "desktops", "desktops.ini", "Desktops")
+    namespace = urldb.namespace(
+        url_dictionary  = var.data["desktops"],
+        dictionary_name = "desktops",
+        section_name    = "Desktops",
+        filename        = "desktops.ini",
+        max             = 5
+    )
+    
+    list_urls   = namespace.list_function
+    add_url     = namespace.add_function
+    delete_url  = namespace.delete_function
+    replace_url = namespace.replace_function
 
 # Fill command dictionary.
 def ins_command ():
