@@ -31,7 +31,8 @@ def ins_command ():
         ".dtop",
         ".dekstop"
     ]
-    var.commands["desktop"].usage = [line.format("{}", n="desktop") for line in urldb.command_usage]
+    var.commands["desktop"].usage = [line.format("{}", n="desktop") \
+                                        for line in urldb.command_usage]
 
 # This command will need NickServ auth sometimes.
 ident = urldb.ident

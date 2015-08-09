@@ -31,7 +31,8 @@ def ins_command ():
         ".homescreen",
         ".hscr"
     ]
-    var.commands["hscreen"].usage = [line.format("{}", n="homescreen") for line in urldb.command_usage]
+    var.commands["hscreen"].usage = [line.format("{}", n="homescreen") \
+                                        for line in urldb.command_usage]
 
 # This command will need NickServ auth sometimes.
 ident = urldb.ident

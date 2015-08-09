@@ -30,7 +30,8 @@ def ins_command ():
         ".station",
         ".stn"
     ]
-    var.commands["station"].usage = [line.format("{}", n="station") for line in urldb.command_usage]
+    var.commands["station"].usage = [line.format("{}", n="station") \
+                                        for line in urldb.command_usage]
 
 # This command will need NickServ auth sometimes.
 ident = urldb.ident
