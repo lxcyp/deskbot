@@ -4,6 +4,7 @@ class ServerLine:
     event = ""
 
 def parse (message):
+    
     event = message.split(" ")[1]
     s_line = ServerLine()
     s_line.event = event
