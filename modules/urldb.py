@@ -66,7 +66,7 @@ def ident (f):
     return check
 
 # Returns a namespace with the functions used in different commands.
-def namespace (url_dictionary, dictionary_name, filename
+def namespace (url_dictionary, dictionary_name, filename,
                 section_name, max = 5):
     
     f_namespace = type("namespace", (object,), {})()
@@ -320,7 +320,8 @@ def delete_function (url_dictionary, dictionary_name, filename, section_name):
 
 # Return the replace function for the URL database command.
 # Can also accept a different max number.
-def replace_function (url_dictionary, dictionary_name, filename, section_name, max = 5):
+def replace_function (url_dictionary, dictionary_name, filename,
+                        section_name, max = 5):
     
     
     # Replace a URL in the user's list.
