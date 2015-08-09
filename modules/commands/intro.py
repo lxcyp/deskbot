@@ -22,11 +22,8 @@ def ins_command ():
     var.commands["intro"].method = read
     var.commands["intro"].tags = ["databases", "simpledb"]
     var.commands["intro"].aliases = [".intro", ".introduction"]
-    var.commands["intro"].usage = [
-        "{} - See your greet message.",
-        "{} -set intro - Set your greet message.",
-        "{} -rm - Remove your greet message."
-    ]
+    var.commands["intro"].usage = [line.format("{}", n="intro") \
+                                    for line in simpledb.command_usage]
 
 # This command uses a database.
 def ins_db ():
@@ -38,15 +35,22 @@ def ins_db ():
         user:var.data["intros"][user][0] for user in var.data["intros"]
     }
     
-    access_db = simpledb.access_function(var.data["intros"], "intro")
-    mod_entry = simpledb.mod_function(var.data["intros"], "intro", "intros.ini", "Introductions")
-    rm_entry = simpledb.rm_function(var.data["intros"], "intro", "intros.ini", "Introductions")
+    namespace = simpledb.namespace(
+        string_dictionary = var.data["intros"],
+        dictionary_name   = "intro",
+        section_name      = "Introductions",
+        filename          = "intros.ini"
+    )
+    
+    access_db = namespace.access_function
+    mod_entry = namespace.modify_function
+    rm_entry  = namespace.remove_function
 
 # Command method.
 def read (user, channel, word):
-    if len(word) > 2 and word[1] in ["-set", "-s"]:
+    if len(word) > 2 and word[1] in simpledb.mod_strings:
         mod_entry(user, channel, word)
-    elif len(word) > 1 and word[1] in ["-rm", "-remove"]:
+    elif len(word) > 1 and word[1] in simpledb.del_strings:
         rm_entry(user, channel, word)
     else:
         access_db(user, channel, word)

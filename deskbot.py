@@ -26,17 +26,23 @@ parser.add_argument("--log", action="store_true",
                     help="Save lines in log/server-address.log.")
 parser.add_argument("--log-file",
                     help="Set a file on which the bot will save logs.")
+parser.add_argument("--debug", action="store_true",
+                    help="Accept exceptions on non-essential modules. (commands)")
+parser.add_argument("--no-auth", action="store_true",
+                    help="Make it so NickServ auth isn't ever required. (RISKY)")
 args = parser.parse_args()
 
 # Grabbing arguments given.
-var.log = args.log
-var.logfile = args.log_file
-irc.server = args.server
-irc.password = args.password
-irc.botnick = args.botnick
-irc.port = args.port
-irc.admin = args.admin
-irc.timeout = args.timeout if args.timeout > 0 else 240
+var.log       = args.log
+var.logfile   = args.log_file
+var.debug     = args.debug
+var.no_auth   = args.no_auth
+irc.server    = args.server
+irc.password  = args.password if args.password else ""
+irc.botnick   = args.botnick
+irc.port      = args.port
+irc.admin     = args.admin
+irc.timeout   = args.timeout if args.timeout > 0 else 240
 
 # Require an admin nickname to go on.
 while not irc.admin:

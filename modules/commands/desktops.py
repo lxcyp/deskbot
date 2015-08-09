@@ -8,10 +8,18 @@ def ins_db ():
     
     var.data["desktops"] = ini.fill_dict("desktops.ini", "Desktops")
     
-    list_urls = urldb.list_function(var.data["desktops"], "desktops")
-    add_url = urldb.add_function(var.data["desktops"], "desktops", "desktops.ini", "Desktops")
-    delete_url = urldb.delete_function(var.data["desktops"], "desktops", "desktops.ini", "Desktops")
-    replace_url = urldb.replace_function(var.data["desktops"], "desktops", "desktops.ini", "Desktops")
+    namespace = urldb.namespace(
+        url_dictionary  = var.data["desktops"],
+        dictionary_name = "desktops",
+        section_name    = "Desktops",
+        filename        = "desktops.ini",
+        max             = 5
+    )
+    
+    list_urls   = namespace.list_function
+    add_url     = namespace.add_function
+    delete_url  = namespace.delete_function
+    replace_url = namespace.replace_function
 
 # Fill command dictionary.
 def ins_command ():
@@ -23,7 +31,8 @@ def ins_command ():
         ".dtop",
         ".dekstop"
     ]
-    var.commands["desktop"].usage = [line.format("{}", n="desktop") for line in urldb.command_usage]
+    var.commands["desktop"].usage = [line.format("{}", n="desktop") \
+                                        for line in urldb.command_usage]
 
 # This command will need NickServ auth sometimes.
 ident = urldb.ident
@@ -32,11 +41,11 @@ ident = urldb.ident
 def read (user, channel, word):    
     if len(word) < 3:
         list_urls(user, channel, word)
-    elif word[1] in ["-a", "-add", "--add"]:
+    elif word[1] in urldb.add_strings:
         add_url(user, channel, word)
-    elif word[1] in ["-rm", "-remove", "--remove"]:
+    elif word[1] in urldb.del_strings:
         delete_url(user, channel, word)
-    elif word[1] in ["-re", "-replace", "--replace"]:
+    elif word[1] in urldb.rep_strings:
         replace_url(user, channel, word)
     else:
         list_urls(user, channel, word)

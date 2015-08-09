@@ -55,9 +55,12 @@ def msg (target, string, raw = False):
         msg(target, line[512:])
     else:
         ircsock.send(line + "\r\n")
+    
+    print("{} -> PRIVMSG {} -> {}".format(botnick, target, string))
 
 def notice (target, string):
     ircsock.send("NOTICE {} :{}\r\n".format(target, string))
+    print("{} -> NOTICE {} -> {}".format(botnick, target, string))
 
 def join (target):
     ircsock.send("JOIN {}\r\n".format(target))

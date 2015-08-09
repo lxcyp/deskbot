@@ -2,5 +2,6 @@ ini/*
 !ini/default/
 api-keys/**
 log/**
+misc/**
 
 *.pyc
