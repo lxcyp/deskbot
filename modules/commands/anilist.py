@@ -12,9 +12,16 @@ def ins_db ():
     for entry in var.data["anilists"]:
         var.data["anilists"][entry] = var.data["anilists"][entry][0]
     
-    access_db = simpledb.access_function(var.data["anilists"], "anime list")
-    mod_entry = simpledb.mod_function(var.data["anilists"], "anime list", "anilists.ini", "AniLists")
-    rm_entry = simpledb.rm_function(var.data["anilists"], "anime list", "anilists.ini", "AniLists")
+    namespace = simpledb.namespace(
+        string_dictionary = var.data["anilists"],
+        dictionary_name   = "anime list",
+        section_name      = "AniLists",
+        filename          = "anilists.ini"
+    )
+    
+    access_db = namespace.access_function
+    mod_entry = namespace.modify_function
+    rm_entry  = namespace.remove_function
 
 # Fill commands dictionary.
 def ins_command ():
@@ -22,7 +29,8 @@ def ins_command ():
     var.commands["anilist"].method = read
     var.commands["anilist"].tags = ["databases", "simpledb"]
     var.commands["anilist"].aliases = [".anilist", ".animelist", ".alist"]
-    var.commands["anilist"].usage = [line.format("{}", n="anime list") for line in simpledb.command_usage]
+    var.commands["anilist"].usage = [line.format("{}", n="anime list") \
+                                        for line in simpledb.command_usage]
 
 # Grab ident function from simpledb.
 ident = simpledb.ident
